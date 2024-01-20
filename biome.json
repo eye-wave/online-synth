@@ -18,8 +18,8 @@
         "noForEach": "off"
       },
       "suspicious": {
-        "noControlCharactersInRegex": "off",
-        "noAsyncPromiseExecutor": "error"
+        "noAsyncPromiseExecutor": "error",
+        "noAssignInExpressions": "off"
       },
       "style": { "noParameterAssign": "off" },
       "nursery": { "noUnusedImports": "warn" },

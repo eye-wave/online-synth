@@ -1,0 +1,13 @@
+{
+  "arrowParens": "avoid",
+  "printWidth": 128,
+  "semi": false,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "useTabs": false,
+  "svelteSortOrder": "options-scripts-markup-styles",
+  "svelteAllowShorthand": true,
+  "svelteIndentScriptAndStyle": true,
+  "plugins": ["prettier-plugin-svelte", "prettier-plugin-organize-imports"],
+  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+}
