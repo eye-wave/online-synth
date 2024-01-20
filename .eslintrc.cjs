@@ -20,6 +20,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "svelte/no-at-html-tags": "off",
   },
   overrides: [

@@ -3,7 +3,24 @@ body {
   min-height: 100vh;
   background: radial-gradient(#444, #111);
   color: #fff;
+  font-family: sans;
+
+  display: flex;
+  flex-direction: column;
+}
+
+#f {
+  padding: 1rem;
+}
+
+#f a {
+  display: flex;
+  align-items: center;
+  color: currentColor;
+}
+
+#app {
+  flex: 1;
   display: grid;
   place-items: center;
-  font-family: sans;
 }

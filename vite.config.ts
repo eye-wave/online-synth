@@ -7,7 +7,7 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
 export default defineConfig({
   resolve: {
     alias: {
-      src: "./src",
+      src: "/src",
     },
   },
   build: {

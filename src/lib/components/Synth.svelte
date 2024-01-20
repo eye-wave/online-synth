@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { createEventDispatcher, getContext } from "svelte"
-  import { generateTuningTable } from "../note-utils"
+  import { createEventDispatcher } from "svelte"
+  import { globalStore } from "src/global"
 
-  $: ctx = getContext(55) as AudioContext
+  $: ctx = $globalStore.audioContext
+  $: tuningTable = $globalStore.TUNING_TABLE
 
-  export let BASE_FREQUENCY = 10
   export let VOICE_COUNT = 8
-  export let tuningTable = generateTuningTable()
   export let wavetable: AudioBuffer | null = null
   export let keyboardCurrentOctave = 5
 
@@ -32,7 +31,7 @@
     if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 
     const sampler = ctx.createBufferSource()
-    const playbackRate = tuningTable[note] / BASE_FREQUENCY
+    const playbackRate = tuningTable[note] / $globalStore.BASE_FREQUENCY
 
     sampler.loop = true
     sampler.buffer = wavetable
