@@ -1,4 +1,3 @@
-
 #launch {
   position: relative;
   padding: 10px 20px;
@@ -11,12 +10,14 @@
   backdrop-filter: blur(10px);
   background: #ffffff12;
   box-shadow: 0 0 50px transparent;
-  transition: box-shadow 200ms, color 200ms;
+  transition:
+    box-shadow 200ms,
+    color 200ms;
 }
 
-#launch:focus,
-#launch:active,
-#launch:hover {
+#launch:not([disabled]):focus,
+#launch:not([disabled]):active,
+#launch:not([disabled]):hover {
   box-shadow: 0 0 100px currentColor;
   outline: 0;
 }
@@ -32,22 +33,37 @@
   border-radius: 5px;
   pointer-events: none;
   box-shadow: 0 0 0 2px currentColor;
-  transition: padding 200ms, inset 200ms;
+  transition:
+    padding 200ms,
+    inset 200ms;
   opacity: 0;
 }
 
-#launch:hover:after,
-#launch:active:after,
-#launch:focus:after {
+#launch:not([disabled]):hover:after,
+#launch:not([disabled]):active:after,
+#launch:not([disabled]):focus:after {
   padding: 4px;
   inset: -4px;
-  opacity: 0.5
+  opacity: 0.5;
 }
 
-#launch:hover:before,
-#launch:active:before,
-#launch:focus:before {
+#launch:not([disabled]):hover:before,
+#launch:not([disabled]):active:before,
+#launch:not([disabled]):focus:before {
   padding: 8px;
   inset: -8px;
-  opacity: 0.2
+  opacity: 0.2;
+}
+
+#launch[disabled] {
+  color: #555;
+  cursor: not-allowed;
+}
+
+#error {
+  position: fixed;
+  background: #ffffff20;
+  inset: 0;
+  height: fit-content;
+  padding: 1rem;
 }

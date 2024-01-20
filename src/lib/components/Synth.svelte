@@ -1,70 +1,121 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { generateWaveformData } from "./generator";
+  import { createEventDispatcher, getContext } from "svelte"
+  import { generateTuningTable } from "../note-utils"
 
-  export let audioContext:AudioContext
-  
-  const sine = generateWaveformData(audioContext,100)
-  const saw = generateWaveformData(audioContext,100,
-    Array(200).fill(0).map((_,i) => (i % 1 === 0 ? 0.4 : 0) / ( i +1 )),
-    Array(200).fill(0).map(() => Math.random() * Math.PI * 2 * 0)
-  )
-  const square = generateWaveformData(audioContext,100,
-    Array(200).fill(0).map((_,i) => (i % 2 === 0 ? 0.4 : 0) / ( i +1 )),
-    Array(200).fill(0).map(() => Math.random() * Math.PI * 2 * 0)
-  )
-  const tri = generateWaveformData(audioContext,100,
-    Array(200).fill(0).map((_,i) => (i % 2 === 0 ? (8 / Math.PI ** 2) * (-1) ** (i / 2) / (i + 1) ** 2 : 0)),
-    Array(200).fill(0).map(() => Math.random() * Math.PI * 2 * 0)
-  )
+  $: ctx = getContext(55) as AudioContext
 
-  const data = new Float32Array([
-    ...sine,
-    ...saw,
-    ...square,
-    ...tri,
-  ])
+  export let BASE_FREQUENCY = 10
+  export let VOICE_COUNT = 8
+  export let tuningTable = generateTuningTable()
+  export let wavetable: AudioBuffer | null = null
+  export let keyboardCurrentOctave = 5
 
-  const audioBuffer = audioContext.createBuffer(1,data.length,audioContext.sampleRate)
-  const channelData = audioBuffer.getChannelData(0)
-  channelData.set(data)
+  let activeVoicesCount = 0
 
-  const frequency = 44
+  type SynthEvents = {
+    noteOn: number
+    noteOff: number
+  }
 
-  const source = audioContext.createBufferSource()
-  source.buffer = audioBuffer
-  source.loop = true
-  source.loopStart = (1 / 100) * 2
-  source.loopEnd = (1 / 100) * 3
-  source.playbackRate.setValueAtTime(frequency / 100,0)
+  const voiceStack: (AudioBufferSourceNode | null)[] = Array.from({ length: 128 }, () => null)
+  const dispatch = createEventDispatcher<SynthEvents>()
 
-  // source.connect(audioContext.destination)
-  // source.start(source.loopStart)
-  // source.stop(audioContext.currentTime + 5)
+  function startPlayingNote(note: number) {
+    if (wavetable === null) return
 
-  let canvas:HTMLCanvasElement
-  let ctx:CanvasRenderingContext2D
+    if (!tuningTable[note]) {
+      console.warn(`Tuning table: ${[...tuningTable]},\ndoes not have a ${note} note.`)
+      return
+    }
 
-  onMount(() => {
-    ctx = canvas.getContext("2d")!
-    canvas.width = 400
-    canvas.height = 300
+    if (activeVoicesCount >= VOICE_COUNT) return
+    if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 
-    ctx.fillRect(0,0,canvas.width,canvas.height)
-    ctx.strokeStyle = "red"
+    const sampler = ctx.createBufferSource()
+    const playbackRate = tuningTable[note] / BASE_FREQUENCY
 
-    ctx.beginPath()
-    ctx.moveTo(0,0)
-    data.forEach((y,x,{ length: l }) => ctx.lineTo(x *canvas.width/(l-1),y * canvas.height /2 + canvas.height /2))
-    ctx.stroke()
+    sampler.loop = true
+    sampler.buffer = wavetable
+    sampler.playbackRate.setValueAtTime(playbackRate, ctx.currentTime)
 
-    ctx.strokeStyle = "lime"
-    ctx.beginPath()
-    ctx.moveTo(0,canvas.height /2)
-    ctx.lineTo(canvas.width,canvas.height /2)
-    ctx.stroke()
-  })
+    sampler.connect(ctx.destination)
+    sampler.start(ctx.currentTime)
+
+    voiceStack[note] = sampler
+    activeVoicesCount++
+
+    dispatch("noteOn", note)
+  }
+
+  function stopPlayingNote(note: number) {
+    const sampler = voiceStack[note]
+
+    if (!sampler) return
+    if (voiceStack[note] === null) return
+
+    sampler.stop()
+
+    voiceStack[note] = null
+    activeVoicesCount--
+
+    dispatch("noteOff", note)
+  }
+
+  const noteKeybinds = "awsedftgyhujkolp;']"
+  function getNoteFromKey(key: string, addOctave = true) {
+    if (key.length > 1) return null
+
+    let note = noteKeybinds.indexOf(key.toLowerCase())
+
+    if (note === -1) return null
+    if (addOctave) note += keyboardCurrentOctave * 12
+
+    return note
+  }
+
+  function keyboardEventDown(e: KeyboardEvent) {
+    if (e.ctrlKey) return
+
+    const activeElement = document.activeElement?.tagName
+
+    if (activeElement === "INPUT") return
+    if (activeElement === "TEXTAREA") return
+
+    // biome-ignore format: stop messing with my switch
+    switch (e.key) {
+      case "z":
+        return (keyboardCurrentOctave -= 1)
+      case "x":
+        return (keyboardCurrentOctave += 1)
+
+      default:
+        break
+    }
+
+    const noteToPlay = getNoteFromKey(e.key)
+
+    if (noteToPlay === null) return
+    e.preventDefault()
+
+    if (voiceStack[noteToPlay] !== null) return
+
+    startPlayingNote(noteToPlay)
+  }
+
+  function keyboardEventUp(e: KeyboardEvent) {
+    const noteToStop = getNoteFromKey(e.key, false)
+
+    if (noteToStop === null) return
+
+    for (let i = 0; i < 12; i++) {
+      const note = noteToStop + i * 12
+
+      if (voiceStack[note] === null) continue
+
+      stopPlayingNote(note)
+    }
+  }
 </script>
 
-<canvas bind:this={canvas}></canvas>
-
+<svelte:window on:keydown={keyboardEventDown} on:keyup={keyboardEventUp} />
+<slot {startPlayingNote} {stopPlayingNote} />
