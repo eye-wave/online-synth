@@ -100,6 +100,8 @@
         break
     }
 
+    keyboardCurrentOctave = clamp(keyboardCurrentOctave,1,10)
+
     const noteToPlay = getNoteFromKey(e.key)
 
     if (noteToPlay === null) return
