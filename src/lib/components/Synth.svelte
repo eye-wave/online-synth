@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { clamp } from "../utils/math"
   import { createEventDispatcher } from "svelte"
   import { globalStore } from "src/global"
 
   $: ctx = $globalStore.audioContext
   $: tuningTable = $globalStore.TUNING_TABLE
+  $: baseFrequency = $globalStore.BASE_FREQUENCY
 
+  export let frame = 1
   export let VOICE_COUNT = 8
   export let wavetable: AudioBuffer | null = null
   export let keyboardCurrentOctave = 5
@@ -20,25 +23,31 @@
   const dispatch = createEventDispatcher<SynthEvents>()
 
   function startPlayingNote(note: number) {
-    if (wavetable === null) return
+    if (wavetable === null) return console.warn("Wavetable is null.")
+    if (!tuningTable[note]) return console.warn("Tuning table entry for the given note is missing.")
+    if (activeVoicesCount >= VOICE_COUNT) return console.warn("Maximum number of active voices reached.")
 
-    if (!tuningTable[note]) {
-      console.warn(`Tuning table: ${[...tuningTable]},\ndoes not have a ${note} note.`)
-      return
-    }
-
-    if (activeVoicesCount >= VOICE_COUNT) return
     if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 
     const sampler = ctx.createBufferSource()
-    const playbackRate = tuningTable[note] / $globalStore.BASE_FREQUENCY
+    const playbackRate = tuningTable[note] / baseFrequency
 
     sampler.loop = true
     sampler.buffer = wavetable
     sampler.playbackRate.setValueAtTime(playbackRate, ctx.currentTime)
 
-    sampler.connect(ctx.destination)
-    sampler.start(ctx.currentTime)
+    const frameFixed = clamp(frame, 1, 256)
+
+    sampler.loopStart = (frameFixed - 1) / baseFrequency
+    sampler.loopEnd = frameFixed / baseFrequency
+
+    const gainNode = ctx.createGain()
+    gainNode.gain.setValueAtTime(0.4, ctx.currentTime)
+
+    sampler.connect(gainNode)
+    gainNode.connect(ctx.destination)
+
+    sampler.start(ctx.currentTime, sampler.loopStart)
 
     voiceStack[note] = sampler
     activeVoicesCount++

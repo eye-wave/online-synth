@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte"
-  import { isKeyBlack } from "../note-utils"
+  import { isKeyBlack } from "../utils/note"
 
   export let offset = 24
   export let value = [] as boolean[]

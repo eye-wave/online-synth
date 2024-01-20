@@ -11,18 +11,11 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      // output: {
-      //   chunkFileNames: "[name].js",
-      //   entryFileNames: "[name].js",
-      //   assetFileNames: "[name].[ext]",
-      // },
-    },
     modulePreload: {
       resolveDependencies() {
         return []
       },
     },
   },
-  plugins: [svelte({ preprocess: vitePreprocess() }), createHtmlPlugin({ minify: true })],
+  plugins: [createHtmlPlugin({ minify: true }), svelte({ preprocess: vitePreprocess() })],
 })

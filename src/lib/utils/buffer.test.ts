@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test"
-import { generateWaveformData } from "./buffer-utils"
+import { generateWaveformData } from "./buffer"
 
 describe("generateWaveformData", () => {
   it("generates wave data with default parameters", () => {

@@ -4,12 +4,29 @@ export function float32ToAudioBuffer(input: Float32Array, context: AudioContext)
   return buffer
 }
 
-export const generateWaveformData = (
+export function normalizeBuffer(input: Float32Array) {
+  let max = 0
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] > max) {
+      max = input[i]
+    }
+  }
+
+  const multiplier = 1 / max
+
+  for (let i = 0; i < input.length; i++) {
+    input[i] *= multiplier
+  }
+
+  return input
+}
+
+export function generateWaveformData(
   sampleRate: number,
   frequency = 100,
   amplitudes = [1],
   phaseOffsets = [0]
-): Float32Array => {
+) {
   const numSamples = Math.floor(sampleRate / frequency)
   const waveData = new Float32Array(numSamples)
 

@@ -13,18 +13,12 @@ import("./styles/button.css").finally(() => {
 
   launchBtn.id = "launch"
   launchBtn.textContent = launchBtn.id
-  launchBtn.onclick = () => {
+  launchBtn.onclick = async () => {
     // @ts-ignore
     const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
-    import("./App.svelte")
-      .then(m => {
-        globalStore.addAudioContext(audioContext)
-
-        new m.default({ target: appContainer })
-
-        launchBtn?.remove()
-      })
+    const App = await import("./App.svelte")
+      .then(m => m.default)
       .catch(() => {
         launchBtn.disabled = true
 
@@ -34,5 +28,13 @@ import("./styles/button.css").finally(() => {
 
         document.body.append(errorMessage)
       })
+
+    globalStore.addAudioContext(audioContext)
+
+    if (!App) throw Error()
+
+    new App({ target: appContainer })
+
+    launchBtn?.remove()
   }
 })

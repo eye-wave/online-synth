@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test"
-import { generateTuningTable, isKeyBlack } from "./note-utils"
+import { generateTuningTable, isKeyBlack } from "./note"
 
 describe("generateTuningTable", () => {
   test("generates a tuning table with default reference frequency", () => {
