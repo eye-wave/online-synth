@@ -12,29 +12,30 @@ import("./styles/extra.css").finally(() => {
   appContainer.append(launchBtn)
 
   launchBtn.id = "launch"
+  launchBtn.className = "on"
   launchBtn.textContent = launchBtn.id
   launchBtn.onclick = async () => {
     // @ts-ignore
     const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
-    const App = await import("./App.svelte")
-      .then(m => m.default)
-      .catch(err => {
-        launchBtn.disabled = true
-
-        const errorMessage = document.createElement("div")
-        errorMessage.id = "error"
-        errorMessage.textContent = "App is dead 💀, ask Support for help or something idk"
-        errorMessage.textContent += `\n${err}`
-
-        document.body.append(errorMessage)
-      })
+    const App = await import("./lib/App.svelte").then(m => m.default)
 
     globalStore.addAudioContext(audioContext)
 
-    if (!App) throw Error()
+    try {
+      new App({ target: appContainer })
+    } catch (err) {
+      launchBtn.classList.remove("on")
+      launchBtn.classList.add("off")
 
-    new App({ target: appContainer })
+      const errorMessage = document.createElement("div")
+      errorMessage.id = "error"
+      errorMessage.textContent = "App is dead 💀, ask Support for help or something idk"
+      errorMessage.textContent += `\n${err}`
+
+      document.body.append(errorMessage)
+      return
+    }
 
     launchBtn?.remove()
   }

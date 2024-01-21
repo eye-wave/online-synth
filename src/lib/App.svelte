@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { float32ToAudioBuffer } from "./lib/utils/buffer"
-  import { generateBasicShapes } from "./lib/components/wavetable/basic-shapes"
-  import { globalStore } from "./lib/global"
-  import Piano from "./lib/components/Piano.svelte"
-  import Synth from "./lib/components/Synth.svelte"
-  import WavetableView from "./lib/components/wavetable/WavetableView.svelte"
+  import { float32ToAudioBuffer } from "./utils/buffer"
+  import { generateBasicShapes } from "./components/wavetable/basic-shapes"
+  import { globalStore } from "./global"
+  import Piano from "./components/Piano.svelte"
+  import Synth from "./components/Synth.svelte"
+  import WavetableView from "./components/wavetable/WavetableView.svelte"
 
   const basicShapes = generateBasicShapes($globalStore.audioContext.sampleRate)
   const wavetable = float32ToAudioBuffer(basicShapes, $globalStore.audioContext)

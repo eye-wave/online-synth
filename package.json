@@ -1,7 +1,8 @@
 {
   "name": "wavetable-synth",
+  "description": "Online wavetable synthesizer.",
+  "version": "0.0.5",
   "private": true,
-  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "dev": "bun run build:wasm && vite",
@@ -9,11 +10,14 @@
     "build:wasm": "bun run wasm:compile && bun run wasm:move",
     "wasm:compile": "cargo build --release --target=wasm32-unknown-unknown",
     "wasm:move": "find target -name '*.wasm' -not -path '*deps*' | xargs -I{} wasm-bindgen {} --remove-name-section --out-dir pkg --target bundler",
+    "wasm:node": "find target -name '*.wasm' -not -path '*deps*' | xargs -I{} wasm-bindgen {} --remove-name-section --out-dir pkg --target nodejs",
     "preview": "vite preview",
     "format": "bun x biome format . --write && prettier . --write . && cargo fmt",
     "lint": "bun x biome lint . --apply-unsafe && eslint . --fix",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "bun run wasm:node && bun test --coverage && cargo test"
   },
+  "repository": "git@github.com:eye-wave/online-synth.git",
   "dependencies": {
     "svelte": "^4.2.9"
   },
@@ -36,7 +40,20 @@
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
     "vite-plugin-html": "^3.2.2",
+    "vite-plugin-html-inject": "^1.1.0",
     "vite-plugin-top-level-await": "^1.4.1",
     "vite-plugin-wasm": "^3.3.0"
-  }
+  },
+  "keywords": [
+    "music",
+    "serum",
+    "sound-processing",
+    "sound",
+    "sounddesign",
+    "synthesizer",
+    "vital",
+    "wavetable-synthesizer",
+    "wavetable"
+  ],
+  "license": "GPL-3.0"
 }

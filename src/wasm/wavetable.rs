@@ -5,15 +5,15 @@ use wasm_bindgen::prelude::*;
 pub fn genrate_basic_shapes_table(
     sample_rate: usize,
     base_frequency: f32,
-    quality: usize,
+    fft_quality: usize,
 ) -> Vec<f32> {
-    let saw_amplitudes: Vec<f32> = (0..quality).map(|i| 0.4 / (i + 1) as f32).collect();
+    let saw_amplitudes: Vec<f32> = (0..fft_quality).map(|i| 0.4 / (i + 1) as f32).collect();
 
-    let square_amplitudes: Vec<f32> = (0..quality)
+    let square_amplitudes: Vec<f32> = (0..fft_quality)
         .map(|i| if i % 2 == 0 { 0.4 } else { 0.0 } / (i + 1) as f32)
         .collect();
 
-    let tri_amplitudes: Vec<f32> = (0..quality)
+    let tri_amplitudes: Vec<f32> = (0..fft_quality)
         .map(|i| {
             if i % 2 == 0 {
                 (8.0 / std::f32::consts::PI.powi(2)) * (-1.0f32).powf(i as f32 / 2.0)
@@ -57,4 +57,22 @@ pub fn genrate_basic_shapes_table(
     result.extend(tri);
 
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_genrate_basic_shapes_table() {
+        let sample_rate = 44100;
+        let base_frequency = 440.0;
+        let fft_quality = 5;
+
+        let result = genrate_basic_shapes_table(sample_rate, base_frequency, fft_quality);
+
+        let expected_length = (sample_rate as f32 / base_frequency) as usize * 4;
+
+        assert_eq!(result.len(), expected_length);
+    }
 }

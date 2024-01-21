@@ -30,3 +30,20 @@ pub fn generate_waveform_data(
 
     wave_data
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_waveform_data() {
+        let sample_rate = 44100;
+        let frequency = 440.0;
+        let amplitudes = vec![1.0, 0.5, 0.2];
+        let phases = vec![0.0, 1.0, 0.5];
+
+        let result = generate_waveform_data(sample_rate, frequency, amplitudes, phases);
+
+        assert_eq!(result.len(), (sample_rate as f32 / frequency) as usize);
+    }
+}

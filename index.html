@@ -2,83 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="<%- project_description %>" />
+    <meta name="keywords" content="<%- project_keywords %>" />
+
+    <meta property="og:title" content="<%- project_name %>" />
+    <meta property="og:description" content="<%- project_description %>" />
+    <!-- <meta property="og:image" content="URL to your featured image" /> -->
+    <!-- <meta property="og:url" content="URL of the page" /> -->
+
+    <!-- <meta name="twitter:card" content="summary_large_image" /> -->
+    <meta name="twitter:title" content="<%- project_name %>" />
+    <meta name="twitter:description" content="<%- project_description %>" />
+    <!-- <meta name="twitter:image" content="URL to your featured image" /> -->
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script type="module" src="/src/main.ts"></script>
 
-    <meta
-      name="description"
-      content="Your concise and compelling page description goes here. This should summarize the content of your page in a few sentences."
-    />
-    <meta name="keywords" content="keyword1, keyword2, keyword3, keyword4" />
-    <meta name="author" content="Your Name" />
-
-    <meta property="og:title" content="Your Page Title" />
-    <meta
-      property="og:description"
-      content="Your concise and compelling page description goes here. This should summarize the content of your page in a few sentences."
-    />
-    <meta property="og:image" content="URL to your featured image" />
-    <meta property="og:url" content="URL of the page" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Your Page Title" />
-    <meta
-      name="twitter:description"
-      content="Your concise and compelling page description goes here. This should summarize the content of your page in a few sentences."
-    />
-    <meta name="twitter:image" content="URL to your featured image" />
-
-    <title>Wavetable synth in svelte.js</title>
+    <title><%- project_name %></title>
   </head>
   <body>
     <main id="app">
-      <noscript>
-        <style>
-          p {
-            font-family: sans;
-            display: flex;
-            align-items: center;
-            color: #fff;
-            margin: 0 auto;
-          }
-
-          svg {
-            width: 32px;
-          }
-        </style>
-        <div style="display: grid">
-          <p>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M12 0C7.5 3 6 3 1.5 3c0 15 0 15 10.5 21 10.5-6 10.5-6 10.5-21-4.5 0-6 0-10.5-3M6 7.5h1.5V12c0 1.3.2 1.5 1.5 1.5s1.5-.2 1.5-1.5V7.5H12v.7a3.8 3.8 0 0 1 2.3-.7 3.8 3.8 0 0 1 3.7 3.8 3.8 3.8 0 0 1-3.7 3.7 3.8 3.8 0 0 1-2.7-1.1C11 14.7 10.3 15 9 15c-2.1 0-3-1-3-3zM14.3 9a2.3 2.3 0 0 0-2.3 2.3 2.3 2.3 0 0 0 2.3 2.2 2.3 2.3 0 0 0 2.2-2.3A2.3 2.3 0 0 0 14.3 9"
-              />
-            </svg>
-            Sorry pal, but i can't let you in. Your buddy Ublock Origin is not welcome.
-          </p>
-          <p>
-            So either enable
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M3 3h18v18H3zm4.7 15c.4.9 1.2 1.6 2.6 1.6 1.5 0 2.5-.8 2.5-2.6v-5.7h-1.7V17c0 .9-.3 1-.9 1-.6 0-.8-.3-1-.8zm6-.1c.5 1 1.5 1.7 3.1 1.7s2.8-.8 2.8-2.4c0-1.4-.8-2-2.3-2.6l-.4-.2c-.7-.3-1-.5-1-1 0-.4.3-.8.8-.8s.8.3 1 .8l1.4-.9c-.6-1-1.3-1.3-2.4-1.3-1.5 0-2.5 1-2.5 2.2 0 1.4.8 2 2 2.6l.5.1c.8.4 1.2.6 1.2 1.2 0 .4-.4.8-1.1.8-.9 0-1.3-.4-1.7-1z"
-              />
-            </svg>
-            or get out of here.
-          </p>
-        </div>
-      </noscript>
+      <load src="src/html/noscritpt.html" />
     </main>
 
     <footer id="f">
       <a href="https://github.com/eye-wave/online-synth" target="_blank">
-        <svg width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M7 2a9 9 0 0 1 2 1 11 11 0 0 1 3 0h3a9 9 0 0 1 2-1h2l1 2v2l1 4c0 2-1 4-3 5a9 9 0 0 1-2 1v5a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-1H6l-2-1-1-2a1 1 0 0 1 0-2l2 1 1 2h2a4 4 0 0 1 0-2 9 9 0 0 1-2-1c-2-1-3-3-3-5l1-4V4l1-2h2Z"
-          />
-        </svg>
+        <load src="./src/html/icons/github.svg" />
         source code</a
       >
     </footer>
