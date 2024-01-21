@@ -22,6 +22,8 @@
     "paths": {
       "src": ["./src"],
       "src/*": ["./src/*"],
+      "pkg": ["./pkg"],
+      "pkg/*": ["./pkg/*"],
     }
   },
   "include": [

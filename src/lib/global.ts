@@ -1,4 +1,4 @@
-import { generateTuningTable } from "./lib/utils/note"
+import { generateTuningTable } from "./utils/note"
 import { writable } from "svelte/store"
 
 export type GlobalStore = {
@@ -12,7 +12,7 @@ function createGlobalStore() {
   const { set, update, subscribe } = writable<GlobalStore>()
 
   set({
-    BASE_FREQUENCY: 10,
+    BASE_FREQUENCY: 23.4375,
     TUNING_FREQUENCY: 440,
     TUNING_TABLE: generateTuningTable(440),
   } as GlobalStore)

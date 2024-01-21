@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { globalStore } from "src/global"
+  import { globalStore } from "src/lib/global"
   import { onMount } from "svelte"
 
   export let width = 480
@@ -18,7 +18,7 @@
     const frameSize = Math.floor($globalStore.audioContext.sampleRate / $globalStore.BASE_FREQUENCY)
     const startingPoint = frameSize * (frame - 1)
 
-    ctx.clearRect(0, 0,canvas.width,canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.beginPath()
     ctx.strokeStyle = "red"
 

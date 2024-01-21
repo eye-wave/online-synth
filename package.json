@@ -1,14 +1,16 @@
 {
   "name": "wavetable-synth",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "rsw": "rsw",
+    "dev": "bun run build:wasm && vite",
+    "build": "bun run build:wasm && vite build",
+    "build:wasm": "bun run wasm:compile && bun run wasm:move",
+    "wasm:compile": "cargo build --release --target=wasm32-unknown-unknown",
+    "wasm:move": "find target -name '*.wasm' -not -path '*deps*' | xargs -I{} wasm-bindgen {} --remove-name-section --out-dir pkg --target bundler",
     "preview": "vite preview",
-    "format": "bun x biome format . --write && prettier . --write .",
+    "format": "bun x biome format . --write && prettier . --write . && cargo fmt",
     "lint": "bun x biome lint . --apply-unsafe && eslint . --fix",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
@@ -33,6 +35,8 @@
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-top-level-await": "^1.4.1",
+    "vite-plugin-wasm": "^3.3.0"
   }
 }

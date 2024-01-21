@@ -1,7 +1,7 @@
 <script lang="ts">
   import { clamp } from "../utils/math"
   import { createEventDispatcher } from "svelte"
-  import { globalStore } from "src/global"
+  import { globalStore } from "src/lib/global"
 
   $: ctx = $globalStore.audioContext
   $: tuningTable = $globalStore.TUNING_TABLE
@@ -100,7 +100,7 @@
         break
     }
 
-    keyboardCurrentOctave = clamp(keyboardCurrentOctave,1,10)
+    keyboardCurrentOctave = clamp(keyboardCurrentOctave, 1, 10)
 
     const noteToPlay = getNoteFromKey(e.key)
 

@@ -1,9 +1,9 @@
-import { globalStore } from "./global"
+import { globalStore } from "./lib/global"
 import "./styles/index.css"
 
 document.querySelectorAll("noscript").forEach(node => node.remove())
 
-import("./styles/button.css").finally(() => {
+import("./styles/extra.css").finally(() => {
   const appContainer = document.getElementById("app") || document.createElement("main")
   appContainer.id = "app"
   document.body.insertBefore(appContainer, document.body.firstChild)
@@ -19,12 +19,13 @@ import("./styles/button.css").finally(() => {
 
     const App = await import("./App.svelte")
       .then(m => m.default)
-      .catch(() => {
+      .catch(err => {
         launchBtn.disabled = true
 
         const errorMessage = document.createElement("div")
         errorMessage.id = "error"
         errorMessage.textContent = "App is dead 💀, ask Support for help or something idk"
+        errorMessage.textContent += `\n${err}`
 
         document.body.append(errorMessage)
       })
