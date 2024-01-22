@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Chart } from "pkg/wavetable_synth"
+  import { Chart2d } from "pkg/plot"
   import { onMount } from "svelte"
 
   export let width = 480
@@ -24,11 +24,13 @@
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart.draw2d(canvas, wavetable, framesize, frame - 1, color)
+    Chart2d.draw(canvas, wavetable, framesize, frame - 1, color)
   }
 
   onMount(() => {
     ctx = canvas.getContext("2d")!
+
+    if (!ctx) throw ":("
   })
 </script>
 

@@ -25,7 +25,7 @@ dist-ssr
 
 # Added by cargo
 
-/target
-/Cargo.lock
-/pkg
+target
+Cargo.lock
+pkg
 .vercel

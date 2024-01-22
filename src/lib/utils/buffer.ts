@@ -1,4 +1,4 @@
-import { generate_waveform_data } from "pkg/wavetable_synth"
+import { generate_waveform_data } from "pkg/synth"
 
 export function float32ToAudioBuffer(input: Float32Array, context: AudioContext) {
   const buffer = context.createBuffer(1, input.length, context.sampleRate)

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Chart } from "pkg/wavetable_synth"
+  import { Chart3d } from "pkg/plot"
   import { onMount } from "svelte"
 
   export let width = 480
@@ -12,24 +12,53 @@
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
 
-  $: updateCanvas(canvas, ctx, wavetable, frame)
+  let canvas_bg: HTMLCanvasElement
+  let ctx_bg: CanvasRenderingContext2D
 
-  function updateCanvas(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    wavetable: Float32Array,
-    frame: number,
-  ) {
+  $: onWavetableChange(wavetable)
+  $: onFrameChange(frame)
+
+  function onWavetableChange(wavetable: Float32Array) {
+    if (!canvas_bg) return
+    if (!ctx_bg) return
+
+    ctx_bg.clearRect(0, 0, width, height)
+    Chart3d.draw_bg(canvas_bg, wavetable, framesize, color)
+
+    onFrameChange(frame)
+  }
+
+  function onFrameChange(frame: number) {
     if (!canvas) return
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart.draw3d(canvas, wavetable, framesize, frame - 1, color)
+    Chart3d.draw_frame(canvas, wavetable, framesize, frame - 1, color)
   }
 
   onMount(() => {
-    ctx = canvas.getContext("2d")!
+    ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+    ctx_bg = canvas.getContext("2d") as CanvasRenderingContext2D
+
+    if (!ctx || !ctx_bg) throw ":("
+
+    onWavetableChange(wavetable)
+    onFrameChange(frame)
   })
 </script>
 
-<canvas {width} {height} bind:this={canvas}></canvas>
+<div>
+  <canvas {width} {height} bind:this={canvas}></canvas>
+  <canvas {width} {height} bind:this={canvas_bg}></canvas>
+</div>
+
+<style>
+  div {
+    position: relative;
+  }
+
+  canvas {
+    position: absolute;
+    inset: 0;
+  }
+</style>

@@ -1,5 +1,7 @@
 use wasm_bindgen::prelude::*;
 
+mod wavetable;
+
 pub fn normalize_vec(vec: &mut Vec<f32>) -> Vec<f32> {
     let max_value = vec.iter().cloned().fold(0. / 0., f32::max);
     let scale_factor = 1.0 / max_value;

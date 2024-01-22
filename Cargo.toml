@@ -1,19 +1,11 @@
-[package]
-name = "wavetable-synth"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-plotters = "0.3.5"
-plotters-canvas = "^0.3.0"
-rustfft = "6.1.0"
-wasm-bindgen = "=0.2.90"
-web-sys = { version = "0.3.39", features = ["HtmlCanvasElement"] }
-
-[lib]
-crate-type = ["cdylib"]
+[workspace]
+resolver = "1"
+members = [
+  "src-rust/fft",
+  "src-rust/synth",
+  "src-rust/plot",
+  "src-rust/loaders",
+]
 
 [profile.release]
 opt-level = "z"

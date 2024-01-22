@@ -1,9 +1,6 @@
-use crate::wasm::buffer::generate_waveform_data;
-use wasm_bindgen::prelude::*;
-
-use crate::wasm::buffer::normalize_vec;
-
 use super::Wavetables;
+use crate::{generate_waveform_data, normalize_vec};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 impl Wavetables {
@@ -11,7 +8,7 @@ impl Wavetables {
         let safe_amplitude = 0.4;
         let mut result: Vec<f32> = Vec::new();
 
-        for t in 1..256 {
+        for t in 1..64 {
             let amplitudes: Vec<f32> = (0..t).map(|i| safe_amplitude / (i + 1) as f32).collect();
 
             let mut frame =

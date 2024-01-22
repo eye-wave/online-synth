@@ -18,8 +18,6 @@ import("./styles/extra.css").finally(() => {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
     try {
-      await import("pkg/wavetable_synth")
-
       const { globalStore } = await import("./lib/global")
       globalStore.addAudioContext(audioContext)
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { float32ToAudioBuffer } from "./utils/buffer"
   import { globalStore } from "./global"
-  import { Wavetables } from "pkg/wavetable_synth"
+  import { Wavetables } from "pkg/synth"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"

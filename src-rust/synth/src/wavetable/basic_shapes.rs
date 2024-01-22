@@ -1,8 +1,6 @@
-use crate::wasm::buffer::generate_waveform_data;
-use crate::wasm::buffer::normalize_vec;
-use wasm_bindgen::prelude::*;
-
 use super::Wavetables;
+use crate::{generate_waveform_data, normalize_vec};
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 impl Wavetables {
