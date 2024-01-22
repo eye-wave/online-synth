@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ComponentType, SvelteComponent } from "svelte"
   import { onMount } from "svelte"
+  import type { ComponentType, SvelteComponent } from "svelte"
   import View2d from "./View2d.svelte"
 
   export let width = 480

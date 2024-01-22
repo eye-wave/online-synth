@@ -26,14 +26,13 @@ impl Wavetables {
     }
 
     pub fn generate_basic_shapes_table(sample_rate: usize, freq: f32) -> Vec<f32> {
-        let safe_amplitude = 0.4;
         let fft_quality: usize = 500;
         let pi = std::f32::consts::PI.powi(2);
 
         let sine_amp = vec![1.0];
-        let saw_amp = generate_amplitudes(0..fft_quality, |i| safe_amplitude / (i + 1) as f32);
+        let saw_amp = generate_amplitudes(0..fft_quality, |i| SAFE_AMPLITUDE / (i + 1) as f32);
         let square_amp = generate_amplitudes(0..fft_quality, |i| {
-            (if i % 2 == 0 { safe_amplitude } else { 0.0 }) / (i + 1) as f32
+            (if i % 2 == 0 { SAFE_AMPLITUDE } else { 0.0 }) / (i + 1) as f32
         });
         let tri_amp = generate_amplitudes(0..fft_quality, |i| {
             if i % 2 == 0 {
