@@ -18,12 +18,15 @@
   $: frameCount = Math.floor(wavetable.length / framesize)
   $: framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
 
-  type WavetableGenerator = (samplerate: number, frequency: number) => Float32Array
+  type WavetableGenerator = () => Float32Array
 
   const tables = new Map<string, WavetableGenerator>([
-    ["Basic Shapes", Wavetables.generate_basic_shapes_table],
-    ["Sine to Square", Wavetables.generate_sine_square_table],
-    ["Sine to Saw", Wavetables.generate_sine_saw_table],
+    ["Basic Shapes", () => Wavetables.generate_basic_shapes_table(sampleRate, baseFrequency)],
+    ["Sine to Saw", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 1)],
+    ["Sine to Square", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 2)],
+    ["3th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 3)],
+    ["4th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 4)],
+    ["10th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 10)],
   ])
 
   function updateWavetable() {
@@ -31,7 +34,7 @@
     const current = tables.get(currentTable)
 
     if (current) {
-      wavetable = current(sampleRate, baseFrequency)
+      wavetable = current()
       wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
     }
   }

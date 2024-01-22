@@ -16,9 +16,10 @@ pub fn generate_waveform_data(
     frequency: f32,
     amplitudes: Vec<f32>,
     phases: Vec<f32>,
+    normalize: bool,
 ) -> Vec<f32> {
     let num_samples = (sample_rate as f32) / frequency;
-    let mut wave_data = Vec::with_capacity(num_samples as usize);
+    let mut wavedata = Vec::with_capacity(num_samples as usize);
 
     let two_pi = 2.0 * std::f32::consts::PI;
 
@@ -35,10 +36,14 @@ pub fn generate_waveform_data(
             y += amplitude * (harmonic_frequency * t + phase).sin();
         }
 
-        wave_data.push(y);
+        wavedata.push(y);
     }
 
-    wave_data
+    if normalize {
+        normalize_vec(&mut wavedata)
+    } else {
+        wavedata
+    }
 }
 
 #[cfg(test)]
@@ -52,7 +57,7 @@ mod tests {
         let amplitudes = vec![1.0, 0.5, 0.2];
         let phases = vec![0.0, 1.0, 0.5];
 
-        let result = generate_waveform_data(sample_rate, frequency, amplitudes, phases);
+        let result = generate_waveform_data(sample_rate, frequency, amplitudes, phases, false);
 
         assert_eq!(result.len(), (sample_rate as f32 / frequency) as usize);
     }
