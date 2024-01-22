@@ -38,7 +38,7 @@
 
   onMount(() => {
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-    ctx_bg = canvas.getContext("2d") as CanvasRenderingContext2D
+    ctx_bg = canvas_bg.getContext("2d") as CanvasRenderingContext2D
 
     if (!ctx || !ctx_bg) throw ":("
 
