@@ -1,5 +1,13 @@
 use wasm_bindgen::prelude::*;
 
+pub fn normalize_vec(vec: &mut Vec<f32>) -> Vec<f32> {
+    let max_value = vec.iter().cloned().fold(0. / 0., f32::max);
+    let scale_factor = 1.0 / max_value;
+
+    vec.iter_mut().for_each(|x: &mut f32| *x *= scale_factor);
+    vec.to_vec()
+}
+
 #[wasm_bindgen]
 pub fn generate_waveform_data(
     sample_rate: usize,

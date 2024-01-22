@@ -1,39 +1,74 @@
 <script lang="ts">
   import { float32ToAudioBuffer } from "./utils/buffer"
-  import { generateBasicShapes } from "./components/wavetable/basic-shapes"
   import { globalStore } from "./global"
+  import { Wavetables } from "pkg/wavetable_synth"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"
 
-  const basicShapes = generateBasicShapes($globalStore.audioContext.sampleRate)
-  const wavetable = float32ToAudioBuffer(basicShapes, $globalStore.audioContext)
+  let sampleRate = $globalStore.audioContext.sampleRate
+  let baseFrequency = $globalStore.BASE_FREQUENCY
+  let currentTable = "Basic Shapes"
+
+  let frame = 3
+
+  let wavetable = Wavetables.generate_basic_shapes_table(sampleRate, baseFrequency)
+  let wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
+
+  $: frameCount = Math.floor(wavetable.length / framesize)
+  $: framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
+
+  type WavetableGenerator = (samplerate: number, frequency: number) => Float32Array
+
+  const tables = new Map<string, WavetableGenerator>([
+    ["Basic Shapes", Wavetables.generate_basic_shapes_table],
+    ["Sine to Square", Wavetables.generate_sine_square_table],
+    ["Sine to Saw", Wavetables.generate_sine_saw_table],
+  ])
+
+  function updateWavetable() {
+    frame = 1
+    const current = tables.get(currentTable)
+
+    if (current) {
+      wavetable = current(sampleRate, baseFrequency)
+      wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
+    }
+  }
 
   let pressedKeys: boolean[] = []
-  let frame = 3
   let tune = 440
 
   $: globalStore.setTuningFrequency(tune)
 </script>
 
 <Synth
-  {wavetable}
+  wavetable={wavetableAudio}
   {frame}
   on:noteOn={e => (pressedKeys[e.detail] = true)}
   on:noteOff={e => (pressedKeys[e.detail] = false)}
   let:stopPlayingNote
   let:startPlayingNote
 >
-  <WavetableView {frame} wavetable={basicShapes} />
+  <WavetableView {frame} {framesize} {wavetable} />
 
   <label>
     Frame
-    <input type="range" min="1" max="4" step="1" bind:value={frame} />
+    <input type="range" min="1" max={frameCount} step="1" bind:value={frame} />
   </label>
 
   <label>
     tune
     <input type="number" bind:value={tune} />
+  </label>
+
+  <label>
+    Wavetable
+    <select bind:value={currentTable} on:change={updateWavetable}>
+      {#each tables as [value]}
+        <option {value}>{value}</option>
+      {/each}
+    </select>
   </label>
 
   <Piano value={pressedKeys} on:keyDown={e => startPlayingNote(e.detail)} on:keyUp={e => stopPlayingNote(e.detail)} />

@@ -28,17 +28,15 @@ try {
   console.log(err)
 }
 
+let counter = 0
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  assetsInclude: ["*.wasm"],
   resolve: {
     alias: {
       src: "/src",
       pkg: "/pkg",
     },
-  },
-  optimizeDeps: {
-    exclude: ["@syntect/wasm"],
   },
   build: {
     modulePreload: {
@@ -50,7 +48,16 @@ export default defineConfig({
   plugins: [
     wasm(),
     topLevelAwait(),
-    svelte({ preprocess: vitePreprocess() }),
+    svelte({
+      preprocess: vitePreprocess(),
+      compilerOptions: {
+        customElement: true,
+        discloseVersion: false,
+        cssHash() {
+          return `_${(++counter).toString(36)}`
+        },
+      },
+    }),
     injectHTML(),
     createHtmlPlugin({
       minify: true,

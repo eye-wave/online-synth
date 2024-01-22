@@ -1,42 +1,72 @@
 <script lang="ts">
-  import { globalStore } from "src/lib/global"
+  import type { ComponentType, SvelteComponent } from "svelte"
   import { onMount } from "svelte"
+  import View2d from "./View2d.svelte"
 
   export let width = 480
   export let height = 360
   export let wavetable: Float32Array
   export let frame: number
+  export let framesize: number
+  export let color = 0x6bdb9620
 
-  let canvas: HTMLCanvasElement
-  let ctx: CanvasRenderingContext2D
+  type Comp = ComponentType<SvelteComponent>
+  type Views = "2d" | "3d" | "sp"
+  export let view: Views = "2d"
 
-  $: updateCanvas(ctx, wavetable, frame)
-
-  function updateCanvas(ctx: CanvasRenderingContext2D, wavetable: Float32Array, frame: number) {
-    if (!ctx) return
-
-    const frameSize = Math.floor($globalStore.audioContext.sampleRate / $globalStore.BASE_FREQUENCY)
-    const startingPoint = frameSize * (frame - 1)
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.beginPath()
-    ctx.strokeStyle = "red"
-
-    for (let i = startingPoint; i < startingPoint + frameSize; i += 4) {
-      const x = (i - startingPoint) * (canvas.width / frameSize)
-      const y = wavetable[i] * canvas.height * 0.5 + canvas.height / 2
-
-      if (wavetable[i] > 1) console.log(wavetable[i])
-
-      ctx.lineTo(x, y)
-    }
-
-    ctx.stroke()
+  const views: Record<Views, { promise: () => Promise<{ default: Comp }>; component: Comp | null }> = {
+    "2d": {
+      promise: () => new Promise(r => r),
+      component: View2d,
+    },
+    "3d": {
+      promise: () => import("./View3d.svelte"),
+      component: null,
+    },
+    sp: {
+      promise: () => import("./ViewSpectral.svelte"),
+      component: null,
+    },
   }
 
-  onMount(() => {
-    ctx = canvas.getContext("2d")!
-  })
+  function nextView() {
+    switch (view) {
+      case "2d":
+        view = "3d"
+        break
+      case "3d":
+        view = "sp"
+        break
+      case "sp":
+        view = "2d"
+        break
+    }
+
+    loadComponent()
+  }
+
+  let currentView: Comp | null = View2d
+  let isLoaded = true
+
+  onMount(loadComponent)
+
+  async function loadComponent() {
+    if (views[view].component === null) {
+      isLoaded = false
+      const component = await views[view].promise()
+      views[view].component = component.default
+      isLoaded = true
+    }
+
+    currentView = views[view].component
+  }
 </script>
 
-<canvas {width} {height} bind:this={canvas}></canvas>
+<div style:width="{width}px" style:height="{height}px">
+  <button on:click={nextView}>{view}</button>
+  {#if isLoaded}
+    <svelte:component this={currentView} {framesize} {color} {wavetable} {width} {height} {frame} />
+  {:else}
+    <p>Loading...</p>
+  {/if}
+</div>

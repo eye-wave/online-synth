@@ -15,10 +15,9 @@
 }
 
 #launch.on:focus,
-#launch.on:active,
 #launch.on:hover {
   box-shadow: 0 0 100px currentColor;
-  outline: 0;
+  outline: none;
 }
 
 #launch:after,
@@ -37,7 +36,6 @@
 }
 
 #launch.on:hover:after,
-#launch.on:active:after,
 #launch.on:focus:after {
   padding: 4px;
   inset: -4px;
@@ -45,7 +43,6 @@
 }
 
 #launch.on:hover:before,
-#launch.on:active:before,
 #launch.on:focus:before {
   padding: 8px;
   inset: -8px;
@@ -54,7 +51,7 @@
 
 #launch.off {
   color: #555;
-  cursor: not-allowed;
+  pointer-events: none;
 }
 
 #error {
