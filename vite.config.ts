@@ -12,7 +12,7 @@ const inject_data = {
   project_description: "",
   project_version: "",
   project_keywords: "",
-  timestamp: ""
+  timestamp: "",
 }
 
 try {
@@ -23,10 +23,13 @@ try {
   const keywords = package_json?.keywords?.join(", ") ?? ""
   const description = package_json?.description + (version ? ` v${version}` : "")
 
-  inject_data.timestamp = new Date().toLocaleDateString("en-UK",{ hour: "2-digit", minute: "2-digit" })
+  inject_data.timestamp = new Date().toLocaleDateString("en-UK", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 
   if (keywords) inject_data.project_keywords = keywords
-  if ( version ) inject_data.project_version = version
+  if (version) inject_data.project_version = version
   if (description) inject_data.project_description = description
 } catch (err) {
   console.log(err)
