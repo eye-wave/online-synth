@@ -9,6 +9,11 @@
   export let framesize: number
   export let color: number
 
+  const scaleY = 0.5
+  const yaw = 0.51
+  const pitch = 0.42
+  const zoom = 1.2
+
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
 
@@ -23,9 +28,9 @@
     if (!ctx_bg) return
 
     ctx_bg.clearRect(0, 0, width, height)
-    Chart3d.draw_bg(canvas_bg, wavetable, framesize, color)
+    Chart3d.draw_bg(canvas_bg, wavetable, framesize, color, pitch, yaw, zoom, scaleY)
 
-    onFrameChange(frame)
+    onFrameChange(frame, pitch, yaw)
   }
 
   function onFrameChange(frame: number) {
@@ -33,7 +38,7 @@
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart3d.draw_frame(canvas, wavetable, framesize, frame - 1, color)
+    Chart3d.draw_frame(canvas, wavetable, framesize, frame - 1, color, pitch, yaw, zoom, scaleY)
   }
 
   onMount(() => {
@@ -42,8 +47,8 @@
 
     if (!ctx || !ctx_bg) throw ":("
 
-    onWavetableChange(wavetable)
-    onFrameChange(frame)
+    onWavetableChange(wavetable, pitch, yaw)
+    onFrameChange(frame, pitch, yaw)
   })
 </script>
 
