@@ -41,6 +41,10 @@
       on:mouseup={() => handleMouseUp(key)}
       on:mouseleave={() => value[key] && handleMouseUp(key)}
       on:mouseenter={() => mouseDown && handleMouseDown(key)}
+      
+      on:touchstart={() => handleMouseDown(key)}
+      on:touchend={() => handleMouseUp(key)}
+
       class="piano-key"
       class:black={isKeyBlack(key)}
       class:active={value[key]}
