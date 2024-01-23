@@ -14,9 +14,12 @@
 
   let wavetable = Wavetables.generate_basic_shapes_table(sampleRate, baseFrequency)
   let wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
-
-  $: frameCount = Math.floor(wavetable.length / framesize)
+  
+  let framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
   $: framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
+
+  let frameCount = Math.floor(wavetable.length / framesize)
+  let cachedFrameCount = frameCount
 
   type WavetableGenerator = () => Float32Array
 
@@ -29,13 +32,18 @@
     ["10th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 10)],
   ])
 
+  updateWavetable()
   function updateWavetable() {
-    frame = 1
     const current = tables.get(currentTable)
 
     if (current) {
       wavetable = current()
       wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
+
+      cachedFrameCount = frameCount
+      frameCount = Math.floor(wavetable.length / framesize)
+
+      frame = Math.floor(( (frame -1) * frameCount ) / cachedFrameCount) +1
     }
   }
 
