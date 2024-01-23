@@ -30,7 +30,7 @@
     ctx_bg.clearRect(0, 0, width, height)
     Chart3d.draw_bg(canvas_bg, wavetable, framesize, color, pitch, yaw, zoom, scaleY)
 
-    onFrameChange(frame, pitch, yaw)
+    onFrameChange(frame)
   }
 
   function onFrameChange(frame: number) {
@@ -47,8 +47,8 @@
 
     if (!ctx || !ctx_bg) throw ":("
 
-    onWavetableChange(wavetable, pitch, yaw)
-    onFrameChange(frame, pitch, yaw)
+    onWavetableChange(wavetable)
+    onFrameChange(frame)
   })
 </script>
 
