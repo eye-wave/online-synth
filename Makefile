@@ -1,40 +1,44 @@
-.PHONY: dev build build_wasm wasm_gen wasm_compile wasm_move wasm_node preview format lint check test
+.PHONY: dev build wasm-build wasm-gen wasm-compile wasm-move wasm-node preview format lint check test
 
 NODE_MODULES_BIN := ./node_modules/.bin
 export PATH := $(NODE_MODULES_BIN):$(PATH)
 
 PROJECT_NAME := online-synth
 
-# development, builds the wasm and starts Vite development server
-dev:
-	make build_wasm
+# builds the wasm and starts Vite development server
+dev: wasm-build
 	vite
 
+# install node dependencies
+install:
+	bun install
+
 # building the project
-build:
-	make build_wasm
+build: wasm-build
 	vite build
 
 # build the WebAssembly modules
-build_wasm:
-	make wasm_compile
-	make wasm_move
+wasm-build: wasm-clean wasm-compile wasm-move
+
+# clean pkg directory
+wasm-clean:
+	rm -rf pkg/*
 
 # generating WebAssembly files
-wasm_gen:
+wasm-gen:
 	find target -name '*.wasm' -not -path '*deps*' -exec wasm-bindgen {} --remove-name-section --split-linked-modules --remove-producers-section --out-dir pkg --target $(target) \;
 
 # compiling Rust code to WebAssembly
-wasm_compile:
+wasm-compile:
 	cargo build --release --target=wasm32-unknown-unknown
 
 # moving generated WebAssembly to specific directories
-wasm_move:
-	make wasm_gen target=bundler
+wasm-move: 
+	$(MAKE) wasm-gen target=bundler
 
 # generating WebAssembly bindings for Node.js
-wasm_node:
-	make wasm_gen target=nodejs
+wasm-node: 
+	$(MAKE) wasm-gen target=nodejs
 
 # previewing the built project
 preview:
@@ -56,8 +60,7 @@ check:
 	svelte-check --tsconfig ./tsconfig.json
 
 # running tests
-test:
-	make wasm_node
+test: wasm-node
 	bun test --coverage
 	cargo test
 
