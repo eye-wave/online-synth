@@ -4,6 +4,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte"
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
 import * as fs from "node:fs"
 import injectHTML from "vite-plugin-html-inject"
+import svg from "@poppanator/sveltekit-svg"
 import topLevelAwait from "vite-plugin-top-level-await"
 import wasm from "vite-plugin-wasm"
 
@@ -42,6 +43,7 @@ export default defineConfig({
   resolve: {
     alias: {
       src: "/src",
+      ico: "/src/assets/icons",
       pkg: "/pkg",
     },
   },
@@ -55,6 +57,7 @@ export default defineConfig({
   plugins: [
     wasm(),
     topLevelAwait(),
+    svg(),
     svelte({
       preprocess: vitePreprocess(),
       compilerOptions: {

@@ -24,6 +24,8 @@
       "src/*": ["./src/*"],
       "pkg": ["./pkg"],
       "pkg/*": ["./pkg/*"],
+      "ico": ["./src/assets/icons"],
+      "ico/*": ["./src/assets/icons/*"],
     }
   },
   "include": [
