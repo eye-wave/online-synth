@@ -17,7 +17,7 @@ const MARGIN: u32 = 2;
 impl Chart3d {
     pub fn draw_bg(
         canvas: HtmlCanvasElement,
-        data: Vec<f32>,
+        data: &[f32],
         framesize: u16,
         color: u32,
         pitch: f64,
@@ -60,7 +60,7 @@ impl Chart3d {
 
     pub fn draw_frame(
         canvas: HtmlCanvasElement,
-        data: Vec<f32>,
+        data: &[f32],
         framesize: u16,
         frame: u8,
         color: u32,
