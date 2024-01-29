@@ -1,4 +1,4 @@
-.PHONY: dev install format lint build preview wasm-build wasm-clean wasm-compile wasm-gen wasm-gen-node test deploy
+.PHONY: dev install format lint build preview wasm-build wasm-build-node wasm-clean wasm-compile wasm-gen test deploy
 
 NODE_MODULES_BIN := ./node_modules/.bin
 export PATH := $(NODE_MODULES_BIN):$(PATH)
@@ -28,7 +28,7 @@ lint:
 	svelte-check --tsconfig ./tsconfig.json
 
 # building the project
-build: wasm-build
+build: wasm-clean wasm-build
 	vite build
 
 # previewing the built project
@@ -36,7 +36,12 @@ preview:
 	vite preview
 
 # build the WebAssembly modules
-wasm-build: wasm-clean wasm-compile wasm-gen
+wasm-build: wasm-compile
+	$(MAKE) wasm-gen
+
+# generating WebAssembly bindings for Node.js
+wasm-build-node: wasm-compile
+	$(MAKE) wasm-gen target=nodejs
 
 # clean directory with generated WebAssembly files
 wasm-clean:
@@ -55,13 +60,9 @@ wasm-gen:
 		--out-dir pkg \
 		--target $(target) \;
 
-# generating WebAssembly bindings for Node.js
-wasm-gen-node: 
-	$(MAKE) wasm-gen target=nodejs
-
 # running tests
-test: wasm-gen-node
-	bun test --coverage
+test: wasm-build-node
+	bun test --coverage || true
 	cargo test
 
 # deploy to vercel

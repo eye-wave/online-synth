@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Chart2d } from "pkg/plot"
+  import { Chart2d } from "pkg/wavetable_synth"
   import { onMount } from "svelte"
 
   export let width = 480

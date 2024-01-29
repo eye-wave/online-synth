@@ -12,7 +12,7 @@ function createGlobalStore() {
   const { set, update, subscribe } = writable<GlobalStore>()
 
   set({
-    BASE_FREQUENCY: 23.4375,
+    BASE_FREQUENCY: 20.48,
     TUNING_FREQUENCY: 440,
     TUNING_TABLE: generateTuningTable(440),
   } as GlobalStore)

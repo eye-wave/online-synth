@@ -22,7 +22,6 @@
         "noAssignInExpressions": "off"
       },
       "style": { "noParameterAssign": "off" },
-      "nursery": { "noUnusedImports": "warn" },
       "performance": { "all": true },
       "correctness": { "all": true }
     }

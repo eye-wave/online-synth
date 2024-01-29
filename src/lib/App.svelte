@@ -1,7 +1,9 @@
 <script lang="ts">
   import { float32ToAudioBuffer } from "./utils/buffer"
   import { globalStore } from "./global"
-  import { Wavetables } from "pkg/synth"
+  import { Wavetables } from "pkg/wavetable_synth"
+  import DownloadBtn from "./components/common/DownloadBtn.svelte"
+  // import ImportBtn from "./components/common/ImportBtn.svelte"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"
@@ -14,7 +16,7 @@
 
   let wavetable = Wavetables.generate_basic_shapes_table(sampleRate, baseFrequency)
   let wavetableAudio = float32ToAudioBuffer(wavetable, $globalStore.audioContext)
-  
+
   let framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
   $: framesize = Math.floor(sampleRate / $globalStore.BASE_FREQUENCY)
 
@@ -30,6 +32,7 @@
     ["3th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 3)],
     ["4th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 4)],
     ["10th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 10)],
+    // ["Custom", () => new Float32Array()],
   ])
 
   updateWavetable()
@@ -43,9 +46,15 @@
       cachedFrameCount = frameCount
       frameCount = Math.floor(wavetable.length / framesize)
 
-      frame = Math.floor(( (frame -1) * frameCount ) / cachedFrameCount) +1
+      frame = Math.floor(((frame - 1) * frameCount) / cachedFrameCount) + 1
     }
   }
+
+  // function updateImportedWavetable(e: CustomEvent<Float32Array>) {
+  //   tables.set("Custom", () => e.detail)
+  //   currentTable = "Custom"
+  //   updateWavetable()
+  // }
 
   let pressedKeys: boolean[] = []
   let tune = 440
@@ -62,6 +71,11 @@
   let:startPlayingNote
 >
   <WavetableView {frame} {framesize} {wavetable} />
+
+  <section>
+    <DownloadBtn {wavetable} wavetableName={currentTable} />
+    <!-- <ImportBtn on:input={updateImportedWavetable} /> -->
+  </section>
 
   <label>
     Frame
@@ -90,6 +104,6 @@
   <h3>Todo</h3>
 
   <ul>
-    <li>Add wave normalization ( square is kinda quiet )</li>
+    <li><strike>Add wave normalization ( square is kinda quiet )</strike></li>
   </ul>
 </section>
