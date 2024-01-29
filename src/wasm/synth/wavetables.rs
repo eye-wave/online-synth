@@ -1,5 +1,6 @@
-use crate::generate_waveform_data;
 use wasm_bindgen::prelude::*;
+
+use crate::wasm::synth::generators::generate_waveform_data;
 
 const QUALITY: u8 = 64;
 const SAFE_AMPLITUDE: f32 = 0.4;

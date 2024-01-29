@@ -9,9 +9,33 @@ use web_sys::HtmlCanvasElement;
 type Point3d = (f64, f64, f64);
 type Frame = Vec<Point3d>;
 
-use crate::{colors::*, Chart3d};
+use super::Chart3d;
+use crate::wasm::plot::colors::*;
 
 const MARGIN: u32 = 2;
+
+#[wasm_bindgen]
+pub struct Chart3dOptions {
+    pub color: u32,
+    pub pitch: f64,
+    pub yaw: f64,
+    pub zoom: f64,
+    pub scale_y: f64,
+}
+
+#[wasm_bindgen]
+impl Chart3dOptions {
+    #[wasm_bindgen(constructor)]
+    pub fn new(color: u32, pitch: f64, yaw: f64, zoom: f64, scale_y: f64) -> Chart3dOptions {
+        Chart3dOptions {
+            color,
+            pitch,
+            yaw,
+            zoom,
+            scale_y,
+        }
+    }
+}
 
 #[wasm_bindgen]
 impl Chart3d {
@@ -19,11 +43,7 @@ impl Chart3d {
         canvas: HtmlCanvasElement,
         data: &[f32],
         framesize: u16,
-        color: u32,
-        pitch: f64,
-        yaw: f64,
-        zoom: f64,
-        scale_y: f64,
+        options: &Chart3dOptions,
     ) {
         let backend = CanvasBackend::with_canvas_object(canvas).unwrap();
         let number_of_frames = data.len() / framesize as usize;
@@ -39,9 +59,9 @@ impl Chart3d {
             .build_cartesian_3d(data_range_x, data_range_y, data_range_z)
             .unwrap();
 
-        modify_projection(&mut chart, pitch, yaw, zoom);
+        modify_projection(&mut chart, options.pitch, options.yaw, options.zoom);
 
-        let stroke = hex_to_rgba(color);
+        let stroke = hex_to_rgba(options.color);
 
         for z in 0..number_of_frames {
             let start_point = z * framesize as usize;
@@ -50,7 +70,7 @@ impl Chart3d {
             let data_to_draw: Frame = data[start_point..end_point]
                 .iter()
                 .enumerate()
-                .map(|(x, &y)| (x as f64, y as f64 * scale_y, z as f64))
+                .map(|(x, &y)| (x as f64, y as f64 * options.scale_y, z as f64))
                 .collect();
 
             let series = LineSeries::new(data_to_draw, stroke);
@@ -63,11 +83,7 @@ impl Chart3d {
         data: &[f32],
         framesize: u16,
         frame: u8,
-        color: u32,
-        pitch: f64,
-        yaw: f64,
-        zoom: f64,
-        scale_y: f64,
+        options: &Chart3dOptions,
     ) {
         let backend = CanvasBackend::with_canvas_object(canvas).unwrap();
         let number_of_frames = data.len() / framesize as usize;
@@ -83,9 +99,9 @@ impl Chart3d {
             .build_cartesian_3d(data_range_x, data_range_y, data_range_z)
             .unwrap();
 
-        modify_projection(&mut chart, pitch, yaw, zoom);
+        modify_projection(&mut chart, options.pitch, options.yaw, options.zoom);
 
-        let stroke = hex_to_rgb(color);
+        let stroke = hex_to_rgb(options.color);
 
         let start_point = frame as usize * framesize as usize;
         let end_point = start_point + framesize as usize;
@@ -93,7 +109,7 @@ impl Chart3d {
         let data_to_draw: Frame = data[start_point..end_point]
             .iter()
             .enumerate()
-            .map(|(x, &y)| (x as f64, y as f64 * scale_y, frame as f64))
+            .map(|(x, &y)| (x as f64, y as f64 * options.scale_y, frame as f64))
             .collect();
 
         let series = LineSeries::new(data_to_draw, stroke);

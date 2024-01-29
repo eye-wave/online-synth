@@ -3,7 +3,8 @@ use plotters_canvas::CanvasBackend;
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlCanvasElement;
 
-use crate::{colors::*, Chart2d};
+use super::Chart2d;
+use crate::wasm::plot::colors::*;
 
 #[wasm_bindgen]
 impl Chart2d {

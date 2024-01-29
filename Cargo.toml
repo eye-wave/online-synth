@@ -1,11 +1,23 @@
-[workspace]
-resolver = "1"
-members = [
-  "src-rust/fft",
-  "src-rust/synth",
-  "src-rust/plot",
-  "src-rust/loaders",
-]
+[package]
+name = "wavetable-synth"
+description = "Rust Logic for an online wavetable synthesizer."
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+byteorder = "1.5.0"
+hound = "3.5.1"
+plotters = "0.3.5"
+plotters-canvas = "^0.3.0"
+rustfft = "6.1.0"
+wasm-bindgen = "=0.2.90"
+web-sys = { version = "0.3.39", features = ["HtmlCanvasElement","console"] }
+
+[lib]
+crate-type = ["cdylib"]
 
 [profile.release]
 opt-level = "z"

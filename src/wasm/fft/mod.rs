@@ -17,8 +17,8 @@ pub fn fft_analyze(samples: Vec<f32>) -> Vec<f32> {
 
     fft.process(&mut buffer);
 
-    let real: Vec<f32> = buffer.iter().map(|c| c.re as f32).collect();
-    let imag: Vec<f32> = buffer.iter().map(|c| c.im as f32).collect();
+    let real: Vec<f32> = buffer.iter().map(|c| c.re).collect();
+    let imag: Vec<f32> = buffer.iter().map(|c| c.im).collect();
 
     let mut result: Vec<f32> = Vec::new();
 

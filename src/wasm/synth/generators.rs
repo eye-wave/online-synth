@@ -1,9 +1,7 @@
 use wasm_bindgen::prelude::*;
 
-mod wavetable;
-
-pub fn normalize_vec(vec: &mut Vec<f32>) -> Vec<f32> {
-    let max_value = vec.iter().cloned().fold(0. / 0., f32::max);
+pub fn normalize_vec(vec: &mut [f32]) -> Vec<f32> {
+    let max_value = vec.iter().cloned().fold(0.0, f32::max);
     let scale_factor = 1.0 / max_value;
 
     vec.iter_mut().for_each(|x: &mut f32| *x *= scale_factor);
@@ -29,7 +27,7 @@ pub fn generate_waveform_data(
         let mut y = 0.0;
 
         for j in 0..amplitudes.len() {
-            let harmonic_frequency = frequency as f32 * (j as f32 + 1.0);
+            let harmonic_frequency = frequency * (j as f32 + 1.0);
             let amplitude = *amplitudes.get(j).unwrap_or(&0.0);
             let phase = *phases.get(j).unwrap_or(&0.0);
 
