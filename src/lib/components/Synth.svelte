@@ -4,6 +4,7 @@
   import { globalStore } from "src/lib/global"
 
   $: ctx = $globalStore.audioContext
+  $: analyzer = $globalStore.analyzerNode
   $: tuningTable = $globalStore.TUNING_TABLE
   $: baseFrequency = $globalStore.BASE_FREQUENCY
 
@@ -45,7 +46,7 @@
     gainNode.gain.setValueAtTime(0.4, ctx.currentTime)
 
     sampler.connect(gainNode)
-    gainNode.connect(ctx.destination)
+    gainNode.connect(analyzer)
 
     sampler.start(ctx.currentTime, sampler.loopStart)
 

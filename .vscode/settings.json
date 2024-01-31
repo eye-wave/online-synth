@@ -2,5 +2,11 @@
   "editor.tabSize": 2,
   "[rust]": {
     "editor.tabSize": 4
+  },
+  "[makefile]": {
+    "editor.insertSpaces": false
+  },
+  "[json]": {
+    "editor.insertSpaces": false
   }
 }
