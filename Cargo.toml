@@ -20,7 +20,9 @@ web-sys = { version = "0.3.39", features = ["HtmlCanvasElement","console"] }
 crate-type = ["cdylib"]
 
 [profile.release]
-opt-level = "z"
-lto = true
+codegen-units = 1
 debug = false
+incremental = false
+lto = true
+opt-level = "z"
 panic = "abort"

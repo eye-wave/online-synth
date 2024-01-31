@@ -49,7 +49,7 @@ wasm-clean:
 
 # compiling Rust code to WebAssembly
 wasm-compile:
-	cargo build --release --target=wasm32-unknown-unknown
+	RUSTFLAGS="-C debuginfo=0" cargo build --release --target=wasm32-unknown-unknown
 
 # generating WebAssembly files
 wasm-gen:
