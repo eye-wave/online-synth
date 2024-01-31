@@ -25,6 +25,7 @@ impl IO {
         buffer
     }
 
+    #[inline]
     fn create_clm_chunk(url: &str) -> Vec<u8> {
         let mut buffer: Vec<u8> = vec![];
         let window_size = 2024;
@@ -43,6 +44,7 @@ impl IO {
         buffer
     }
 
+    #[inline]
     fn create_data_chunk(wave_data: &[f32]) -> Vec<u8> {
         let mut buffer: Vec<u8> = vec![];
 
@@ -66,6 +68,7 @@ impl IO {
         buffer
     }
 
+    #[inline]
     fn create_fmt_chunk(sample_rate: u32) -> Vec<u8> {
         let mut buffer: Vec<u8> = vec![];
         let bit_depth = 16u16;

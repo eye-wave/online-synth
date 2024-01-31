@@ -1,5 +1,6 @@
 use plotters::prelude::*;
 
+#[inline]
 pub fn hex_to_rgba(color: u32) -> RGBAColor {
     let r = ((color >> 24) & 0xFF) as u8;
     let g = ((color >> 16) & 0xFF) as u8;
@@ -9,6 +10,7 @@ pub fn hex_to_rgba(color: u32) -> RGBAColor {
     RGBAColor(r, g, b, a)
 }
 
+#[inline]
 pub fn hex_to_rgb(color: u32) -> RGBColor {
     let r = ((color >> 24) & 0xFF) as u8;
     let g = ((color >> 16) & 0xFF) as u8;
