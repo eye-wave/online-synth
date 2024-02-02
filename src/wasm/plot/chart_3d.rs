@@ -1,7 +1,9 @@
 use crate::wasm::plot::colors::*;
 use plotters::{
+    chart::{ChartBuilder, ChartContext},
     coord::{ranged3d::Cartesian3d, types::RangedCoordf64, Shift},
-    prelude::*,
+    drawing::{DrawingArea, IntoDrawingArea},
+    series::LineSeries,
 };
 use plotters_canvas::CanvasBackend;
 use std::ops::Range;

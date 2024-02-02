@@ -1,4 +1,4 @@
-use plotters::prelude::*;
+use plotters::style::{RGBAColor, RGBColor};
 
 #[inline]
 pub fn hex_to_rgba(color: u32) -> RGBAColor {

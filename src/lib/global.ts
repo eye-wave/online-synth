@@ -13,15 +13,16 @@ function createGlobalStore() {
   const { set, update, subscribe } = writable<GlobalStore>()
 
   set({
-    BASE_FREQUENCY: 20,
     TUNING_FREQUENCY: 440,
     TUNING_TABLE: generateTuningTable(440),
   } as GlobalStore)
 
   const addAudioContext = (audioContext: AudioContext) => {
     const analyzerNode = audioContext.createAnalyser()
+    const BASE_FREQUENCY = audioContext.sampleRate / 2048
+
     analyzerNode.connect(audioContext.destination)
-    update(s => ({ ...s, audioContext, analyzerNode }))
+    update(s => ({ ...s, audioContext, analyzerNode, BASE_FREQUENCY }))
   }
   const setTuningFrequency = (freq: number) =>
     update(state => ({ ...state, TUNING_FREQUENCY: freq, TUNING_TABLE: generateTuningTable(freq) }))

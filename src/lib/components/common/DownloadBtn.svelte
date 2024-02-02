@@ -10,6 +10,7 @@
 
   function downloadWavetable() {
     const buffer = IO.encode_wav(wavetable, sampleRate)
+
     const blob = new Blob([buffer], { type: "audio/wav" })
     const url = URL.createObjectURL(blob)
 

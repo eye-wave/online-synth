@@ -1,4 +1,4 @@
-use plotters::prelude::*;
+use plotters::{chart::ChartBuilder, drawing::IntoDrawingArea, series::AreaSeries};
 use plotters_canvas::CanvasBackend;
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlCanvasElement;
