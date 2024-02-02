@@ -66,7 +66,7 @@ test: wasm-build-node
 	cargo test
 
 # deploy to vercel
-deploy:
+deploy: build
 	vercel build
 	build_url=$$(vercel --prebuilt | grep -o -E 'https:\/\/.+\.app'); \
 	vercel promote "$$build_url" -y
