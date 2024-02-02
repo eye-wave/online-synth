@@ -5,7 +5,7 @@
   import DownloadBtn from "./components/common/DownloadBtn.svelte"
   import ImportBtn from "./components/common/ImportBtn.svelte"
   import Piano from "./components/Piano.svelte"
-  import Synth from "./components/Synth.svelte"
+  import Synth from "./components/synth/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"
 
   let sampleRate = $globalStore.audioContext.sampleRate

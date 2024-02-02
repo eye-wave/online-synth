@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IO } from "pkg/wavetable_synth"
   import { globalStore } from "src/lib/global"
+  import { IO } from "pkg/wavetable_synth"
   import DownloadIcon from "ico/download.svg?component"
 
   export let wavetable: Float32Array

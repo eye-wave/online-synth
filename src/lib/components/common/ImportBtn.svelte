@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IO } from "pkg/wavetable_synth"
   import { createEventDispatcher } from "svelte"
+  import { IO } from "pkg/wavetable_synth"
 
   let files: FileList
 

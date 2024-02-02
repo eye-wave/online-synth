@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { clamp } from "../utils/math"
+  import { clamp } from "../../utils/math"
   import { createEventDispatcher } from "svelte"
+  import { createSampler, getNoteFromKey } from "./synth"
   import { globalStore } from "src/lib/global"
 
   $: ctx = $globalStore.audioContext
-  $: analyzer = $globalStore.analyzerNode
-  $: tuningTable = $globalStore.TUNING_TABLE
-  $: baseFrequency = $globalStore.BASE_FREQUENCY
 
   export let frame = 1
   export let VOICE_COUNT = 8
@@ -25,28 +23,11 @@
 
   function startPlayingNote(note: number) {
     if (wavetable === null) return console.warn("Wavetable is null.")
-    if (!tuningTable[note]) return console.warn("Tuning table entry for the given note is missing.")
     if (activeVoicesCount >= VOICE_COUNT) return console.warn("Maximum number of active voices reached.")
 
     if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 
-    const sampler = ctx.createBufferSource()
-    const playbackRate = tuningTable[note] / baseFrequency
-
-    sampler.loop = true
-    sampler.buffer = wavetable
-    sampler.playbackRate.setValueAtTime(playbackRate, ctx.currentTime)
-
-    const frameFixed = clamp(frame, 1, 256)
-
-    sampler.loopStart = (frameFixed - 1) / baseFrequency
-    sampler.loopEnd = frameFixed / baseFrequency
-
-    const gainNode = ctx.createGain()
-    gainNode.gain.setValueAtTime(0.4, ctx.currentTime)
-
-    sampler.connect(gainNode)
-    gainNode.connect(analyzer)
+    const sampler = createSampler(ctx, wavetable, frame, note)
 
     sampler.start(ctx.currentTime, sampler.loopStart)
 
@@ -70,18 +51,6 @@
     dispatch("noteOff", note)
   }
 
-  const noteKeybinds = "awsedftgyhujkolp;']"
-  function getNoteFromKey(key: string, addOctave = true) {
-    if (key.length > 1) return null
-
-    let note = noteKeybinds.indexOf(key.toLowerCase())
-
-    if (note === -1) return null
-    if (addOctave) note += keyboardCurrentOctave * 12
-
-    return note
-  }
-
   function keyboardEventDown(e: KeyboardEvent) {
     if (e.ctrlKey) return
 
@@ -102,8 +71,7 @@
     }
 
     keyboardCurrentOctave = clamp(keyboardCurrentOctave, 1, 10)
-
-    const noteToPlay = getNoteFromKey(e.key)
+    const noteToPlay = getNoteFromKey(e.key, true, keyboardCurrentOctave)
 
     if (noteToPlay === null) return
     e.preventDefault()
@@ -114,7 +82,7 @@
   }
 
   function keyboardEventUp(e: KeyboardEvent) {
-    const noteToStop = getNoteFromKey(e.key, false)
+    const noteToStop = getNoteFromKey(e.key)
 
     if (noteToStop === null) return
 
