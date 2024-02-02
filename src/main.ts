@@ -17,7 +17,9 @@ window.addEventListener(
     launchBtn.textContent = launchBtn.id
     launchBtn.onclick = async () => {
       // @ts-ignore
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: 44100,
+      })
 
       try {
         const { globalStore } = await import("./lib/global")

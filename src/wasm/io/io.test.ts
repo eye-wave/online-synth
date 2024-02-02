@@ -7,7 +7,7 @@ import { Wavetables, IO } from "pkg/wavetable_synth"
 describe("Encoding wavetable to 'audio/wav' file", () => {
   test("Sox should analyze the file wihout an error", async () => {
     const freq = get(globalStore).BASE_FREQUENCY
-    const samplerate = 48000
+    const samplerate = 44100
     const filepath = "/tmp/wavetable.wav"
 
     const table = Wavetables.generate_basic_shapes_table(samplerate, freq)
