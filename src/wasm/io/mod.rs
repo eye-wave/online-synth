@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-pub mod decoder;
+pub mod decoders;
 pub mod encoder;
 
 #[wasm_bindgen]

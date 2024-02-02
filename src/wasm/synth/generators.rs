@@ -1,6 +1,10 @@
 use wasm_bindgen::prelude::*;
 
 pub fn normalize_vec(vec: &mut [f32]) -> Vec<f32> {
+    if vec.is_empty() {
+        return vec![];
+    }
+
     let max_value = vec.iter().cloned().fold(0.0, f32::max);
     let scale_factor = 1.0 / max_value;
 

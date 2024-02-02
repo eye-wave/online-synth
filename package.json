@@ -1,7 +1,7 @@
 {
 	"name": "wavetable-synth",
 	"description": "Online wavetable synthesizer.",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"private": true,
 	"type": "module",
 	"repository": "git@github.com:eye-wave/online-synth.git",

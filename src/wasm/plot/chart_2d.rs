@@ -11,6 +11,10 @@ pub struct Chart2d {}
 #[wasm_bindgen]
 impl Chart2d {
     pub fn draw(canvas: HtmlCanvasElement, data: &[f32], framesize: u16, frame: u8, color: u32) {
+        if data.is_empty() {
+            return;
+        }
+
         let backend = CanvasBackend::with_canvas_object(canvas).unwrap();
         let data_range_x = 0.0..framesize as f64;
         let data_range_y = -1.0..1.0;

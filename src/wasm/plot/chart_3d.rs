@@ -98,6 +98,10 @@ impl Chart3d {
         framesize: usize,
         options: &Chart3dOptions,
     ) {
+        if data.is_empty() {
+            return;
+        }
+
         let number_of_frames = data.len() / framesize;
         let (data_range_x, data_range_y, data_range_z) =
             Self::create_range(framesize, number_of_frames);
@@ -131,6 +135,10 @@ impl Chart3d {
         frame: u8,
         options: &Chart3dOptions,
     ) {
+        if data.is_empty() {
+            return;
+        }
+
         let number_of_frames = data.len() / framesize;
         let (data_range_x, data_range_y, data_range_z) =
             Self::create_range(framesize, number_of_frames);

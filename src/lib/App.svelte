@@ -3,7 +3,7 @@
   import { globalStore } from "./global"
   import { Wavetables } from "pkg/wavetable_synth"
   import DownloadBtn from "./components/common/DownloadBtn.svelte"
-  // import ImportBtn from "./components/common/ImportBtn.svelte"
+  import ImportBtn from "./components/common/ImportBtn.svelte"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"
@@ -32,7 +32,7 @@
     ["3th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 3)],
     ["4th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 4)],
     ["10th Peaks", () => Wavetables.generate_nth_wavetable(sampleRate, baseFrequency, 10)],
-    // ["Custom", () => new Float32Array()],
+    ["Custom", () => new Float32Array()],
   ])
 
   updateWavetable()
@@ -50,11 +50,11 @@
     }
   }
 
-  // function updateImportedWavetable(e: CustomEvent<Float32Array>) {
-  //   tables.set("Custom", () => e.detail)
-  //   currentTable = "Custom"
-  //   updateWavetable()
-  // }
+  function updateImportedWavetable(e: CustomEvent<Float32Array>) {
+    tables.set("Custom", () => e.detail)
+    currentTable = "Custom"
+    updateWavetable()
+  }
 
   let pressedKeys: boolean[] = []
   let tune = 440
@@ -74,7 +74,7 @@
 
   <section>
     <DownloadBtn {wavetable} wavetableName={currentTable} />
-    <!-- <ImportBtn on:input={updateImportedWavetable} /> -->
+    <ImportBtn on:input={updateImportedWavetable} />
   </section>
 
   <label>
@@ -104,6 +104,8 @@
   <h3>Todo</h3>
 
   <ul>
-    <li><strike>Add wave normalization ( square is kinda quiet )</strike></li>
+    <i>Import export</i>
+    <li>Exported wavetable work flawlessly in vital, but are a bit broken on Serum</li>
+    <li>Importing wavetables from serum works perfectly</li>
   </ul>
 </section>
