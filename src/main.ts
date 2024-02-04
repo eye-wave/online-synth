@@ -28,6 +28,8 @@ window.addEventListener(
         const App = await import("./lib/App.svelte").then(m => m.default)
         new App({ target: appContainer })
       } catch (err) {
+        console.log(err)
+
         launchBtn.classList.remove("on")
         launchBtn.classList.add("off")
 

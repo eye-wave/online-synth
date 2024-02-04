@@ -1,4 +1,6 @@
-use plotters::{chart::ChartBuilder, drawing::IntoDrawingArea, series::AreaSeries};
+use plotters::{
+    chart::ChartBuilder, drawing::IntoDrawingArea, series::AreaSeries, style::RGBAColor,
+};
 use plotters_canvas::CanvasBackend;
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlCanvasElement;
@@ -12,6 +14,13 @@ pub struct Chart2d {}
 impl Chart2d {
     pub fn draw(canvas: HtmlCanvasElement, data: &[f32], framesize: u16, frame: u8, color: u32) {
         if data.is_empty() {
+            return;
+        }
+
+        let start_point = frame as usize * framesize as usize;
+        let end_point = start_point + framesize as usize;
+
+        if start_point > data.len() {
             return;
         }
 
@@ -33,17 +42,15 @@ impl Chart2d {
             .draw()
             .unwrap();
 
-        let start_point = frame as usize * framesize as usize;
-        let end_point = start_point + framesize as usize;
-
         let data_to_draw: Vec<(f64, f64)> = data[start_point..end_point]
             .iter()
             .enumerate()
             .map(|(x, &y)| (x as f64, y as f64))
             .collect();
 
-        let fill = hex_to_rgba(color);
-        let stroke = hex_to_rgb(color);
+        let stroke = hex_to_rgb(&color);
+        let mut fill = RGBAColor::from(hex_to_rgb(&color));
+        fill.3 = 0.2;
 
         let series = AreaSeries::new(data_to_draw, 0.0, fill).border_style(stroke);
 

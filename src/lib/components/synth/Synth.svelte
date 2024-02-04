@@ -3,13 +3,15 @@
   import { createEventDispatcher } from "svelte"
   import { createSampler, getNoteFromKey } from "./synth"
   import { globalStore } from "src/lib/global"
+  import { wavetableStore } from "../wavetable/wavetable"
 
   $: ctx = $globalStore.audioContext
 
-  export let frame = 1
   export let VOICE_COUNT = 8
   export let wavetable: AudioBuffer | null = null
   export let keyboardCurrentOctave = 5
+
+  $: frameStore = wavetableStore.frameStore
 
   let activeVoicesCount = 0
 
@@ -27,7 +29,7 @@
 
     if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 
-    const sampler = createSampler(ctx, wavetable, frame, note)
+    const sampler = createSampler(ctx, wavetable, $frameStore, note)
 
     sampler.start(ctx.currentTime, sampler.loopStart)
 

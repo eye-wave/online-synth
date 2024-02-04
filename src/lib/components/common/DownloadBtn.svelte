@@ -1,32 +1,36 @@
 <script lang="ts">
   import { globalStore } from "src/lib/global"
   import { IO } from "pkg/wavetable_synth"
+  import { onDestroy } from "svelte"
+  import { wavetableStore } from "../wavetable/wavetable"
   import DownloadIcon from "ico/download.svg?component"
 
-  export let wavetable: Float32Array
-  export let wavetableName: string
+  let href = ""
 
-  let sampleRate = $globalStore.audioContext.sampleRate
+  $: nameStore = wavetableStore.nameStore
 
-  function downloadWavetable() {
-    const buffer = IO.encode_wav(wavetable, sampleRate)
+  const unsubscribe = wavetableStore.bufferStore.subscribe(buffer => updateBlobUrl(buffer))
 
+  function updateBlobUrl(input: Float32Array) {
+    const buffer = IO.encode_wav(input, $globalStore.audioContext.sampleRate)
     const blob = new Blob([buffer], { type: "audio/wav" })
-    const url = URL.createObjectURL(blob)
 
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `${wavetableName}.wav`
-
-    document.body.append(a)
-    a.click()
-    a.remove()
-
-    URL.revokeObjectURL(url)
+    href = URL.createObjectURL(blob)
   }
+
+  onDestroy(() => {
+    unsubscribe()
+    URL.revokeObjectURL(href)
+  })
 </script>
 
-<button on:click={downloadWavetable}>
-  <DownloadIcon />
-  Save {wavetableName}.wav
-</button>
+<a download="{$nameStore}.wav" {href}>
+  <DownloadIcon height="24" />
+</a>
+
+<style>
+  a {
+    display: inline-block;
+    color: currentColor;
+  }
+</style>

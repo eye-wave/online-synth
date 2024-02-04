@@ -2,15 +2,15 @@ import { $, write } from "bun"
 import { describe, test, expect } from "bun:test"
 import { get } from "svelte/store"
 import { globalStore } from "src/lib/global"
-import { Wavetables, IO } from "pkg/wavetable_synth"
+import { IO, generate_saw_tooth } from "pkg-node/wavetable_synth"
 
 describe("Encoding wavetable to 'audio/wav' file", () => {
   test("Sox should analyze the file wihout an error", async () => {
-    const freq = get(globalStore).BASE_FREQUENCY
+    const _freq = get(globalStore).BASE_FREQUENCY
     const samplerate = 44100
     const filepath = "/tmp/wavetable.wav"
 
-    const table = Wavetables.generate_basic_shapes_table(samplerate, freq)
+    const table = generate_saw_tooth(samplerate)
     const buffer = IO.encode_wav(table, samplerate)
 
     await write(filepath, buffer)

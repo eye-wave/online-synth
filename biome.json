@@ -8,7 +8,7 @@
     "lineWidth": 100
   },
   "files": {
-    "ignore": [".vercel", "dist", "node_modules", "pkg", "target"]
+    "ignore": [".vercel", "dist", "node_modules", "pkg", "public", "target"]
   },
   "linter": {
     "enabled": true,

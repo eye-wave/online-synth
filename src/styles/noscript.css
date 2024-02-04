@@ -1,0 +1,11 @@
+p {
+  font-family: sans;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  margin: 0 auto;
+}
+
+svg {
+  width: 32px;
+}

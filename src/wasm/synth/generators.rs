@@ -48,6 +48,12 @@ pub fn generate_waveform_data(
     }
 }
 
+#[wasm_bindgen]
+pub fn generate_saw_tooth(window_size: u16) -> Vec<f32> {
+    let step = 2.0 / (window_size - 1) as f32;
+    (0..window_size).map(|i| -1.0 + step * i as f32).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

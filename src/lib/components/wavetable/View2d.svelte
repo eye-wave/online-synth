@@ -1,30 +1,27 @@
 <script lang="ts">
   import { Chart2d } from "pkg/wavetable_synth"
   import { onMount } from "svelte"
+  import { wavetableStore } from "./wavetable"
+  import { globalStore } from "src/lib/global"
 
   export let width = 480
   export let height = 360
-  export let wavetable: Float32Array
-  export let frame: number
-  export let framesize: number
   export let color: number
+
+  $: bufferStore = wavetableStore.bufferStore
+  $: frameStore = wavetableStore.frameStore
 
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
 
-  $: updateCanvas(canvas, ctx, wavetable, frame)
+  $: updateCanvas(canvas, ctx, $bufferStore, $frameStore)
 
-  function updateCanvas(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    wavetable: Float32Array,
-    frame: number,
-  ) {
+  function updateCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, buffer: Float32Array, frame: number) {
     if (!canvas) return
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart2d.draw(canvas, wavetable, framesize, frame - 1, color)
+    Chart2d.draw(canvas, buffer, $globalStore.windowSize, frame - 1, color)
   }
 
   onMount(() => {

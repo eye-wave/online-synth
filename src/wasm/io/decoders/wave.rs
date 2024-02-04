@@ -3,22 +3,28 @@ use wasm_bindgen::prelude::*;
 use hound::{SampleFormat, WavReader};
 use std::io::Cursor;
 
-use crate::wasm::io::IO;
+use crate::{wasm::io::IO, web_log};
 
 #[wasm_bindgen]
 impl IO {
     pub fn decode_wav(data: &[u8], window_size: u16) -> Vec<f32> {
         let cursor = Cursor::new(data);
 
+        web_log!("{:?}", data);
+
         let reader = match WavReader::new(cursor) {
             Ok(reader) => reader,
-            Err(_) => return Vec::new(),
+            Err(error) => {
+                web_log!("{:?}", error);
+                return Vec::new();
+            }
         };
 
         let max_size = window_size as usize * 256;
         let sample_format = reader.spec().sample_format;
 
         if sample_format != SampleFormat::Float && sample_format != SampleFormat::Int {
+            web_log!("{:?}", sample_format);
             return vec![];
         }
 

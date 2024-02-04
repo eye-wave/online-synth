@@ -22,8 +22,10 @@
 		"paths": {
 			"src": ["./src"],
 			"src/*": ["./src/*"],
-			"pkg": ["./pkg"],
-			"pkg/*": ["./pkg/*"],
+			"pkg": ["./pkg/bundler"],
+			"pkg/*": ["./pkg/bundler/*"],
+			"pkg-node": ["./pkg/node"],
+			"pkg-node/*": ["./pkg/node/*"],
 			"ico": ["./src/assets/icons"],
 			"ico/*": ["./src/assets/icons/*"],
 		}

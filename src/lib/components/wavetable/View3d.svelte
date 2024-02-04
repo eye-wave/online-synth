@@ -1,12 +1,11 @@
 <script lang="ts">
   import { Chart3d, Chart3dOptions } from "pkg/wavetable_synth"
+  import { globalStore } from "src/lib/global"
   import { onDestroy, onMount } from "svelte"
+  import { wavetableStore } from "./wavetable"
 
   export let width = 480
   export let height = 360
-  export let wavetable: Float32Array
-  export let frame: number
-  export let framesize: number
   export let color: number
 
   export let scaleY = 0.5
@@ -16,6 +15,9 @@
 
   const chartOptions = new Chart3dOptions(color, pitch, yaw, zoom, scaleY)
   onDestroy(() => chartOptions.free())
+
+  $: bufferStore = wavetableStore.bufferStore
+  $: frameStore = wavetableStore.frameStore
 
   $: chartOptions.color = color
   $: chartOptions.pitch = pitch
@@ -29,17 +31,19 @@
   let canvas_bg: HTMLCanvasElement
   let ctx_bg: CanvasRenderingContext2D
 
-  $: onWavetableChange(wavetable)
-  $: onFrameChange(frame)
+  $: onWavetableChange($bufferStore)
+  $: onFrameChange($frameStore)
+
+  const unsubscribe = wavetableStore.bufferStore.subscribe(onWavetableChange)
 
   function onWavetableChange(wavetable: Float32Array) {
     if (!canvas_bg) return
     if (!ctx_bg) return
 
     ctx_bg.clearRect(0, 0, width, height)
-    Chart3d.draw_bg(canvas_bg, wavetable, framesize, chartOptions)
+    Chart3d.draw_bg(canvas_bg, wavetable, $globalStore.windowSize, chartOptions)
 
-    onFrameChange(frame)
+    onFrameChange($frameStore)
   }
 
   function onFrameChange(frame: number) {
@@ -47,7 +51,7 @@
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart3d.draw_frame(canvas, wavetable, framesize, frame - 1, chartOptions)
+    Chart3d.draw_frame(canvas, $bufferStore, $globalStore.windowSize, frame - 1, chartOptions)
   }
 
   onMount(() => {
@@ -56,9 +60,11 @@
 
     if (!ctx || !ctx_bg) throw ":("
 
-    onWavetableChange(wavetable)
-    onFrameChange(frame)
+    onWavetableChange($bufferStore)
+    onFrameChange($frameStore)
   })
+
+  onDestroy(unsubscribe)
 </script>
 
 <div>
@@ -69,6 +75,7 @@
 <style>
   div {
     position: relative;
+    flex-shrink: 0;
   }
 
   canvas {
