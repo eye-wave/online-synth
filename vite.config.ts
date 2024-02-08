@@ -1,8 +1,11 @@
+import { analyzer } from "vite-bundle-analyzer"
 import { createHtmlPlugin } from "vite-plugin-html"
 import { defineConfig } from "vite"
 import { svelte } from "@sveltejs/vite-plugin-svelte"
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
+import { VitePWA } from "vite-plugin-pwa"
 import * as fs from "node:fs"
+import deadFile from "vite-plugin-deadfile"
 import injectHTML from "vite-plugin-html-inject"
 import svg from "@poppanator/sveltekit-svg"
 import topLevelAwait from "vite-plugin-top-level-await"
@@ -11,14 +14,7 @@ import wasm from "vite-plugin-wasm"
 
 const prod = process.env.NODE_ENV === "production"
 const mode = prod ? "production" : "development"
-
-// biome-ignore lint: lint/suspicious/noExplicitAny
-function devOnly<T extends (...args: any[]) => any>(
-  fn: T,
-  ...args: Parameters<T>
-): ReturnType<T> | undefined {
-  return !prod && fn(...args)
-}
+const analyze = process.env.VITE_ANALYZE === "true"
 
 function injectData() {
   const data = {
@@ -61,7 +57,7 @@ export default defineConfig({
     alias: {
       src: "/src",
       ico: "/src/assets/icons",
-      pkg: "/pkg/bundler",
+      pkg: "/target/wasm-bundler",
     },
   },
   esbuild: {
@@ -88,7 +84,30 @@ export default defineConfig({
         },
       },
     }),
-    devOnly(TurboConsole),
+    VitePWA({
+      registerType: "autoUpdate",
+    }),
+    !prod && TurboConsole(),
+    analyze &&
+      analyzer({
+        analyzerMode: "static",
+        summary: true,
+        fileName: "vite_bundle_analytics",
+      }),
+    prod &&
+      deadFile({
+        root: "src",
+        include: ["**/*"],
+        exclude: [
+          "**/*.css",
+          "**/*.html",
+          "**/*.rs",
+          "**/*.svg",
+          "**/*.test.ts",
+          "app.d.ts",
+          "vite-env.d.ts",
+        ],
+      }),
     injectHTML(),
     createHtmlPlugin({
       minify: true,
@@ -97,4 +116,7 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    port: 3000,
+  },
 })

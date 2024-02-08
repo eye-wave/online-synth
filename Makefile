@@ -1,14 +1,15 @@
 #!make
-.PHONY: dev install format lint build preview wasm-build wasm-build-node wasm-clean wasm-compile wasm-gen test deploy
+.PHONY: dev install format lint build analyze preview wasm-build wasm-build-node wasm-compile wasm-gen test deploy
 
 MAKEFLAGS += --silent
 
 export PATH := ./node_modules/.bin:$(PATH)
 
-project_name := online-synth # vercel project name
+project_name := "online-synth" # vercel project name
 
-target := bundler # wasm target
-out_dir := pkg/bundler # wasm output directory
+target := "bundler" # wasm target
+out_dir := "target/wasm-bundler" # wasm output directory
+wasm_target := "wasm32-unknown-unknown" # wasm target for cargo
 
 # builds the wasm and starts Vite development server
 dev: wasm-build
@@ -35,6 +36,12 @@ lint:
 build: wasm-build
 	NODE_ENV=production vite build
 
+# analyze the size of the project
+analyze:
+	cargo bloat
+	VITE_ANALYZE=true $(MAKE) build
+	xdg-open dist/vite_bundle_analytics.html
+
 # previewing the built project
 preview:
 	vite preview
@@ -45,23 +52,15 @@ wasm-build: wasm-compile wasm-gen
 # generating WebAssembly bindings for Node.js
 wasm-build-node:
 	$(MAKE) wasm-compile
-	$(MAKE) wasm-gen target=nodejs out_dir=pkg/node
-
-# clean directory with generated WebAssembly files
-wasm-clean:
-	mkdir -p pkg/node
-	mkdir -p pkg/bundler
-	
-	rm -rf pkg/node/*
-	rm -rf pkg/bundler/*
+	$(MAKE) wasm-gen target=nodejs out_dir=target/wasm-node
 
 # compiling Rust code to WebAssembly
 wasm-compile:
-	RUSTFLAGS="-C debuginfo=0" cargo build --release --target=wasm32-unknown-unknown
+	RUSTFLAGS="-C debuginfo=0" cargo build --release --target=$(wasm_target)
 
 # generating WebAssembly files
 wasm-gen:
-	find target -name '*.wasm' -not -path '*deps*' -exec wasm-bindgen {} \
+	find target/$(wasm_target) -name '*.wasm' -not -path '*deps*' -exec wasm-bindgen {} \
 		--remove-name-section \
 		--split-linked-modules \
 		--remove-producers-section \

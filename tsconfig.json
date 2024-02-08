@@ -20,13 +20,9 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"paths": {
-			"src": ["./src"],
 			"src/*": ["./src/*"],
-			"pkg": ["./pkg/bundler"],
-			"pkg/*": ["./pkg/bundler/*"],
-			"pkg-node": ["./pkg/node"],
-			"pkg-node/*": ["./pkg/node/*"],
-			"ico": ["./src/assets/icons"],
+			"pkg/*": ["./target/wasm-bundler/*"],
+			"pkg-node/*": ["./target/wasm-node/*"],
 			"ico/*": ["./src/assets/icons/*"],
 		}
 	},
