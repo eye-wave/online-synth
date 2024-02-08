@@ -5,10 +5,20 @@
   export let offset = 24
   export let value = [] as boolean[]
   export let numberOfKeys = 65
+  export let autoSize = true
 
   type ComponentEvents = {
     keyDown: number
     keyUp: number
+  }
+
+  $: numberOfKeysFit = onResize()
+  $: numberOfKeysToDisplay = autoSize ? numberOfKeysFit : numberOfKeys
+
+  const onResize = () => {
+    let value = Math.floor((window.innerWidth * 12) / 175) - 10
+    if (isKeyBlack(value + offset + 6)) return value - 1
+    return value
   }
 
   const dispatch = createEventDispatcher<ComponentEvents>()
@@ -29,10 +39,14 @@
   }
 </script>
 
-<svelte:window on:mousedown={() => (mouseDown = true)} on:mouseup={() => (mouseDown = false)} />
+<svelte:window
+  on:resize={() => (numberOfKeysFit = onResize())}
+  on:mousedown={() => (mouseDown = true)}
+  on:mouseup={() => (mouseDown = false)}
+/>
 
 <div id="piano">
-  {#each Array(numberOfKeys) as _, i}
+  {#each Array(numberOfKeysToDisplay) as _, i}
     {@const key = i + firstKey}
 
     <div
