@@ -22,9 +22,11 @@ window.addEventListener(
       })
 
       try {
-        const { globalStore } = await import("./lib/stores/global")
+        const { globalConsts } = await import("./lib/stores/constants")
+        const { audioInterfaceStore } = await import("./lib/stores/audio")
 
-        globalStore.addAudioContext(audioContext)
+        globalConsts.init(audioContext)
+        audioInterfaceStore.init(audioContext)
 
         const App = await import("./lib/App.svelte").then(m => m.default)
         new App({ target: appContainer })

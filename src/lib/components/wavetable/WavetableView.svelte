@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { globalStore } from "src/lib/stores/global"
+  import { globalConsts } from "src/lib/stores/constants"
   import { onMount } from "svelte"
   import { wavetableStore } from "./wavetable"
   import DownloadBtn from "../common/DownloadBtn.svelte"
@@ -16,7 +16,7 @@
   $: nameStore = wavetableStore.nameStore
 
   let frameCount = 1
-  $: frameCount = Math.floor($bufferStore.length / globalStore.windowSize)
+  $: frameCount = Math.floor($bufferStore.length / globalConsts.windowSize)
 
   let modalOpen = false
   let Modal: ComponentType<SvelteComponent> | null = null
@@ -29,7 +29,10 @@
   type Views = "2D" | "3D" | "SP"
   export let view: Views = "2D"
 
-  const views: Record<Views, { promise: () => Promise<{ default: Comp }>; component: Comp | null }> = {
+  const views: Record<
+    Views,
+    { promise: () => Promise<{ default: Comp }>; component: Comp | null }
+  > = {
     "2D": {
       promise: () => new Promise(r => r),
       component: View2d,
@@ -44,7 +47,9 @@
     },
   }
 
-  function onPickStockWavetable({ detail: [collectionName, tableName] }: CustomEvent<[string, string]>) {
+  function onPickStockWavetable({
+    detail: [collectionName, tableName],
+  }: CustomEvent<[string, string]>) {
     wavetableStore.setStockTable(collectionName, tableName).catch(console.error)
   }
 
@@ -87,7 +92,7 @@
 
     <div style:display="flex" style:flex="1">
       <button on:click={() => wavetableStore.prev()}>{"<"}</button>
-      <button on:click={() => (modalOpen = true)} style:flex="1" style:text-align="center">{$nameStore}</button>
+      <button on:click={() => (modalOpen = true)} class="modal-btn">{$nameStore}</button>
       <button on:click={() => wavetableStore.next()}>{">"}</button>
     </div>
 
@@ -98,7 +103,13 @@
     {/if}
   </section>
 
-  <div class="window" aria-hidden="true" style:width="{width}px" style:height="{height}px" on:click={nextView}>
+  <div
+    aria-hidden="true"
+    class="window"
+    on:click={nextView}
+    style:width="{width}px"
+    style:height="{height}px"
+  >
     <span class="viewmode" style:color="#{color.toString(16).slice(0, 6)}">{view}</span>
     {#if isLoaded}
       <svelte:component this={currentView} {color} {width} {height} />
@@ -112,6 +123,11 @@
 </div>
 
 <style>
+  .modal-btn {
+    flex: 1;
+    text-align: center;
+  }
+
   .topbar {
     display: flex;
   }

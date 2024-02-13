@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Chart2d } from "pkg/wavetable_synth"
-  import { globalStore } from "src/lib/stores/global"
+  import { globalConsts } from "src/lib/stores/constants"
   import { onMount } from "svelte"
   import { wavetableStore } from "./wavetable"
 
@@ -16,12 +16,17 @@
 
   $: updateCanvas(canvas, ctx, $bufferStore, $frameStore)
 
-  function updateCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, buffer: Float32Array, frame: number) {
+  function updateCanvas(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    buffer: Float32Array,
+    frame: number,
+  ) {
     if (!canvas) return
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart2d.draw(canvas, buffer, globalStore.windowSize, frame - 1, color)
+    Chart2d.draw(canvas, buffer, globalConsts.windowSize, frame - 1, color)
   }
 
   onMount(() => {

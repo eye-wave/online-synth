@@ -1,7 +1,7 @@
 import { IO, generate_saw_tooth } from "pkg/wavetable_synth"
 import { writable } from "svelte/store"
 import tableMap from "src/assets/wavetables/tablemap.yaml"
-import { globalStore } from "src/lib/stores/global"
+import { globalConsts } from "src/lib/stores/constants"
 
 export type WavetableStore = {
   buffer: Float32Array
@@ -84,7 +84,7 @@ function createWavetableStore() {
   }
 
   function recalculateFrame(buffer: Float32Array) {
-    const frameCount = Math.floor(buffer.length / globalStore.windowSize)
+    const frameCount = Math.floor(buffer.length / globalConsts.windowSize)
     frameStore.update(frame => Math.floor(((frame - 1) * frameCount) / cachedFrameCount) + 1)
 
     cachedFrameCount = frameCount

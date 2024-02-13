@@ -24,11 +24,17 @@
   }
 
   function onKeyDown(e: KeyboardEvent) {
-    if ( e.key === "Escape" ) close()
+    if (e.key === "Escape") close()
   }
 </script>
 
-<dialog on:keydown={onKeyDown} bind:this={dialog} style={$$props.style} class={$$props.class}>
+<dialog
+  aria-hidden="true"
+  bind:this={dialog}
+  on:keydown={onKeyDown}
+  style={$$props.style}
+  class={$$props.class}
+>
   <slot name="btn">
     <button on:click={close}>X</button>
   </slot>

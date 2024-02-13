@@ -1,6 +1,7 @@
+import { audioInterfaceStore } from "src/lib/stores/audio"
 import { clamp } from "src/lib/utils/math"
 import { get } from "svelte/store"
-import { globalStore } from "src/lib/stores/global"
+import { globalConsts } from "src/lib/stores/constants"
 import { tuningStore } from "src/lib/stores/tuning"
 
 const noteKeybinds = "awsedftgyhujkolp;']"
@@ -21,7 +22,8 @@ export function createSampler(
   frame: number,
   note: number
 ) {
-  const { analyzerNode, baseFrequency } = globalStore
+  const { baseFrequency } = globalConsts
+  const { masterGainNode } = audioInterfaceStore
 
   const sampler = ctx.createBufferSource()
   const playbackRate = get(tuningStore).tuningTable[note] / baseFrequency
@@ -36,10 +38,10 @@ export function createSampler(
   sampler.loopEnd = frameFixed / baseFrequency
 
   const gainNode = ctx.createGain()
-  gainNode.gain.setValueAtTime(0.4, ctx.currentTime)
+  gainNode.gain.setValueAtTime(1, ctx.currentTime)
 
   sampler.connect(gainNode)
-  gainNode.connect(analyzerNode)
+  gainNode.connect(masterGainNode)
 
   return sampler
 }

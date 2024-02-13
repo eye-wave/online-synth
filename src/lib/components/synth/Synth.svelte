@@ -3,9 +3,9 @@
   import { createEventDispatcher } from "svelte"
   import { createSampler, getNoteFromKey } from "./synth"
   import { wavetableStore } from "../wavetable/wavetable"
-  import { globalStore } from "src/lib/stores/global"
+  import { globalConsts } from "src/lib/stores/constants"
 
-  const ctx = globalStore.audioContext
+  const ctx = globalConsts.audioContext
 
   export let VOICE_COUNT = 8
   export let wavetable: AudioBuffer | null = null
@@ -25,7 +25,8 @@
 
   function startPlayingNote(note: number) {
     if (wavetable === null) return console.warn("Wavetable is null.")
-    if (activeVoicesCount >= VOICE_COUNT) return console.warn("Maximum number of active voices reached.")
+    if (activeVoicesCount >= VOICE_COUNT)
+      return console.warn("Maximum number of active voices reached.")
 
     if (voiceStack[note] === null && activeVoicesCount < VOICE_COUNT) stopPlayingNote(note)
 

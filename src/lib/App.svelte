@@ -1,6 +1,6 @@
 <script lang="ts">
   import { float32ToAudioBuffer } from "./utils/buffer"
-  import { globalStore } from "./stores/global"
+  import { globalConsts } from "./stores/constants"
   import { wavetableStore } from "./components/wavetable/wavetable"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/synth/Synth.svelte"
@@ -8,7 +8,7 @@
   import SettingsButton from "./components/settings/Button.svelte"
 
   $: bufferStore = wavetableStore.bufferStore
-  $: wavetableAudio = float32ToAudioBuffer($bufferStore, globalStore.audioContext)
+  $: wavetableAudio = float32ToAudioBuffer($bufferStore, globalConsts.audioContext)
 
   let pressedKeys: boolean[] = []
 </script>
@@ -24,11 +24,18 @@
 
   <WavetableView />
 
-  <Piano value={pressedKeys} on:keyDown={e => startPlayingNote(e.detail)} on:keyUp={e => stopPlayingNote(e.detail)} />
+  <Piano
+    value={pressedKeys}
+    on:keyDown={e => startPlayingNote(e.detail)}
+    on:keyUp={e => stopPlayingNote(e.detail)}
+  />
 </Synth>
 
 <section>
-  <p>This app does not use oscillators for audio generation. Instead, it uses audio buffer created from scratch.</p>
+  <p>
+    This app does not use oscillators for audio generation. Instead, it uses audio buffer created
+    from scratch.
+  </p>
   <h3>Todo</h3>
 
   <ul>

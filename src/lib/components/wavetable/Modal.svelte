@@ -33,7 +33,9 @@
               <tr>
                 <th>{"<3"}</th>
                 <th>
-                  <button on:click={() => dispatch("change", [collection.name, table])}>{table}</button>
+                  <button on:click={() => dispatch("change", [collection.name, table])}
+                    >{table}</button
+                  >
                 </th>
                 <th>{collection.name}</th>
               </tr>
