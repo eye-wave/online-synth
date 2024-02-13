@@ -7,10 +7,10 @@
   let dialog: HTMLDialogElement
 
   let tune = 440
-  let volume = 0.4
+  let volume = audioInterfaceStore.masterGain.gain
 
   function onVolumeChange() {
-    audioInterfaceStore.masterGainNode.gain.setValueAtTime(volume, 0)
+    audioInterfaceStore.masterGain.setGain(volume)
   }
 
   $: tuningStore.retune(tune)

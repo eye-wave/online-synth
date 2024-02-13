@@ -23,7 +23,7 @@ export function createSampler(
   note: number
 ) {
   const { baseFrequency } = globalConsts
-  const { masterGainNode } = audioInterfaceStore
+  const { masterGain } = audioInterfaceStore
 
   const sampler = ctx.createBufferSource()
   const playbackRate = get(tuningStore).tuningTable[note] / baseFrequency
@@ -38,10 +38,10 @@ export function createSampler(
   sampler.loopEnd = frameFixed / baseFrequency
 
   const gainNode = ctx.createGain()
-  gainNode.gain.setValueAtTime(1, ctx.currentTime)
+  gainNode.gain.setValueAtTime(0.6, ctx.currentTime)
 
   sampler.connect(gainNode)
-  gainNode.connect(masterGainNode)
+  masterGain.connectTo(gainNode)
 
   return sampler
 }
