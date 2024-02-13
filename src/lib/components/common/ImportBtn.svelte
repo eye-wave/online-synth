@@ -1,7 +1,9 @@
 <script lang="ts">
-  import ImportIcon from "ico/import.svg?component"
   import { createEventDispatcher } from "svelte"
-  import { IO } from "pkg/wavetable_synth"
+  import { globalConsts } from "src/lib/stores/constants"
+  import ImportIcon from "ico/import.svg?component"
+
+  const accept = ".aac,.flac,.mp3,.ogg,.opus,.wav,.webm"
 
   let files: FileList
 
@@ -17,8 +19,11 @@
   async function handleFileChange() {
     const file = files.item(0)
     if (!file) return
+
+    const { audioContext } = globalConsts
     const arrayBuffer = await file.arrayBuffer()
-    const buffer = IO.decode_wav(new Uint8Array(arrayBuffer), 2048)
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+    const buffer = audioBuffer.getChannelData(0)
     const name = file.name
 
     dispatch("input", { buffer, name })
@@ -27,7 +32,7 @@
 
 <label for="fileInput">
   <ImportIcon height="24" />
-  <input bind:files type="file" id="fileInput" accept=".wav" on:change={handleFileChange} />
+  <input bind:files type="file" id="fileInput" {accept} on:change={handleFileChange} />
 </label>
 
 <style>

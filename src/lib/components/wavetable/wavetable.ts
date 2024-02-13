@@ -1,7 +1,8 @@
-import { IO, generate_saw_tooth } from "pkg/wavetable_synth"
+import { generate_saw_tooth } from "pkg/wavetable_synth"
 import { writable } from "svelte/store"
 import tableMap from "src/assets/wavetables/tablemap.yaml"
 import { globalConsts } from "src/lib/stores/constants"
+import { decodeBuffer } from "src/lib/utils/buffer"
 
 export type WavetableStore = {
   buffer: Float32Array
@@ -109,7 +110,7 @@ function createWavetableStore() {
     const url = encodeURI(`/wavetables/${collectionName}/${tableName}.wav`)
     return fetch(url)
       .then(res => res.arrayBuffer())
-      .then(buffer => IO.decode_wav(new Uint8Array(buffer), 2048))
+      .then(buffer => decodeBuffer(globalConsts.audioContext, buffer))
       .catch(() => new Float32Array())
   }
 
