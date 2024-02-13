@@ -22,9 +22,13 @@
     dialog.close()
     dispatch("close")
   }
+
+  function onKeyDown(e: KeyboardEvent) {
+    if ( e.key === "Escape" ) close()
+  }
 </script>
 
-<dialog bind:this={dialog} style={$$props.style} class={$$props.class}>
+<dialog on:keydown={onKeyDown} bind:this={dialog} style={$$props.style} class={$$props.class}>
   <slot name="btn">
     <button on:click={close}>X</button>
   </slot>
