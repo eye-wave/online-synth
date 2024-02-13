@@ -1,18 +1,16 @@
 <script lang="ts">
   import { float32ToAudioBuffer } from "./utils/buffer"
-  import { globalStore } from "./global"
+  import { globalStore } from "./stores/global"
   import { wavetableStore } from "./components/wavetable/wavetable"
   import Piano from "./components/Piano.svelte"
   import Synth from "./components/synth/Synth.svelte"
   import WavetableView from "./components/wavetable/WavetableView.svelte"
+  import SettingsButton from "./components/settings/Button.svelte"
 
   $: bufferStore = wavetableStore.bufferStore
-  $: wavetableAudio = float32ToAudioBuffer($bufferStore, $globalStore.audioContext)
+  $: wavetableAudio = float32ToAudioBuffer($bufferStore, globalStore.audioContext)
 
   let pressedKeys: boolean[] = []
-  let tune = 440
-
-  $: globalStore.setTuningFrequency(tune)
 </script>
 
 <Synth
@@ -22,12 +20,9 @@
   on:noteOn={e => (pressedKeys[e.detail] = true)}
   wavetable={wavetableAudio}
 >
-  <WavetableView />
+  <SettingsButton />
 
-  <label>
-    tune
-    <input type="number" bind:value={tune} />
-  </label>
+  <WavetableView />
 
   <Piano value={pressedKeys} on:keyDown={e => startPlayingNote(e.detail)} on:keyUp={e => stopPlayingNote(e.detail)} />
 </Synth>

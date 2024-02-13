@@ -8,5 +8,8 @@
   },
   "[json]": {
     "editor.insertSpaces": false
+  },
+  "search.exclude": {
+    "**/*.wav": true
   }
 }

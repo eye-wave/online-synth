@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Chart2d } from "pkg/wavetable_synth"
+  import { globalStore } from "src/lib/stores/global"
   import { onMount } from "svelte"
   import { wavetableStore } from "./wavetable"
-  import { globalStore } from "src/lib/global"
 
   export let width = 480
   export let height = 360
@@ -21,7 +21,7 @@
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart2d.draw(canvas, buffer, $globalStore.windowSize, frame - 1, color)
+    Chart2d.draw(canvas, buffer, globalStore.windowSize, frame - 1, color)
   }
 
   onMount(() => {

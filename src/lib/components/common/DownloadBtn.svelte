@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { globalStore } from "src/lib/global"
+  import { globalStore } from "src/lib/stores/global"
   import { IO } from "pkg/wavetable_synth"
   import { onDestroy } from "svelte"
   import { wavetableStore } from "../wavetable/wavetable"
@@ -12,7 +12,7 @@
   const unsubscribe = wavetableStore.bufferStore.subscribe(buffer => updateBlobUrl(buffer))
 
   function updateBlobUrl(input: Float32Array) {
-    const buffer = IO.encode_wav(input, $globalStore.audioContext.sampleRate)
+    const buffer = IO.encode_wav(input, globalStore.audioContext.sampleRate)
     const blob = new Blob([buffer], { type: "audio/wav" })
 
     href = URL.createObjectURL(blob)

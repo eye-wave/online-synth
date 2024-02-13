@@ -29,3 +29,8 @@ body {
   display: grid;
   place-items: center;
 }
+
+dialog::backdrop {
+  background: #00000060;
+  backdrop-filter: blur(1rem);
+}

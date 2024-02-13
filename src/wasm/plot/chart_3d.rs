@@ -1,4 +1,4 @@
-use crate::wasm::plot::colors::*;
+use crate::wasm::{plot::colors::*, utils::downsample::downsample};
 use plotters::{
     chart::{ChartBuilder, ChartContext},
     coord::{ranged3d::Cartesian3d, types::RangedCoordf64, Shift},
@@ -95,7 +95,10 @@ impl Chart3d {
         let number_of_frames = data.len() / framesize;
         let single_frame = number_of_frames < 2;
 
-        let data_range_x = 0.0..framesize as f64;
+        let step = 8;
+        let data_downsampled = downsample(data, step);
+
+        let data_range_x = 0.0..(framesize / step) as f64;
         let data_range_y = -2.0..2.0;
         let data_range_z = 0.0..(number_of_frames + single_frame as usize) as f64;
 
@@ -112,7 +115,7 @@ impl Chart3d {
         let mut fill = RGBAColor::from(hex_to_rgb(&options.color));
         fill.3 = 0.05;
 
-        let x_axis = 0..framesize;
+        let x_axis = 0..(framesize / step);
         let z_axis = 0..number_of_frames + single_frame as usize;
 
         chart
@@ -127,8 +130,8 @@ impl Chart3d {
                             number_of_frames as f64 - z
                         };
 
-                        let i = (framesize as f64 * z + x) as usize;
-                        let y = data.get(i).unwrap_or(&0.0);
+                        let i = ((framesize / step) as f64 * z + x) as usize;
+                        let y = data_downsampled.get(i).unwrap_or(&0.0);
 
                         *y as f64
                     },

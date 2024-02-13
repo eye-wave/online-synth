@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Chart3d, Chart3dOptions } from "pkg/wavetable_synth"
-  import { globalStore } from "src/lib/global"
+  import { globalStore } from "src/lib/stores/global"
   import { onDestroy, onMount } from "svelte"
   import { wavetableStore } from "./wavetable"
 
@@ -41,7 +41,7 @@
     if (!ctx_bg) return
 
     ctx_bg.clearRect(0, 0, width, height)
-    Chart3d.draw_bg(canvas_bg, wavetable, $globalStore.windowSize, chartOptions)
+    Chart3d.draw_bg(canvas_bg, wavetable, globalStore.windowSize, chartOptions)
 
     onFrameChange($frameStore)
   }
@@ -51,7 +51,7 @@
     if (!ctx) return
 
     ctx.clearRect(0, 0, width, height)
-    Chart3d.draw_frame(canvas, $bufferStore, $globalStore.windowSize, frame - 1, chartOptions)
+    Chart3d.draw_frame(canvas, $bufferStore, globalStore.windowSize, frame - 1, chartOptions)
   }
 
   onMount(() => {

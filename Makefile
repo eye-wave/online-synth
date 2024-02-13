@@ -16,8 +16,9 @@ dev: wasm-build
 	vite
 
 # install node dependencies
-install: wasm-clean
+install:
 	bun install
+	cargo install wasm-bindgen-cli --version 0.2.90
 
 # code formatting using Biome, Prettier and Cargo
 format:
@@ -38,7 +39,6 @@ build: wasm-build
 
 # analyze the size of the project
 analyze:
-	cargo bloat
 	VITE_ANALYZE=true $(MAKE) build
 	xdg-open dist/vite_bundle_analytics.html
 
@@ -56,6 +56,7 @@ wasm-build-node:
 
 # compiling Rust code to WebAssembly
 wasm-compile:
+	rustup target add wasm32-unknown-unknown
 	RUSTFLAGS="-C debuginfo=0" cargo build --release --target=$(wasm_target)
 
 # generating WebAssembly files
@@ -69,7 +70,7 @@ wasm-gen:
 
 # running tests
 test: wasm-build-node
-	bun test --coverage || true
+	bun test || true
 	cargo test
 
 # deploy to vercel

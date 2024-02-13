@@ -2,12 +2,14 @@
   import ImportIcon from "ico/import.svg?component"
   import { createEventDispatcher } from "svelte"
   import { IO } from "pkg/wavetable_synth"
-  import { wavetableStore } from "../wavetable/wavetable"
 
   let files: FileList
 
   type ImportBtnEvents = {
-    input: Float32Array
+    input: {
+      name: string
+      buffer: Float32Array
+    }
   }
 
   const dispatch = createEventDispatcher<ImportBtnEvents>()
@@ -16,11 +18,10 @@
     const file = files.item(0)
     if (!file) return
     const arrayBuffer = await file.arrayBuffer()
-    const decodedBuffer = IO.decode_wav(new Uint8Array(arrayBuffer), 2048)
+    const buffer = IO.decode_wav(new Uint8Array(arrayBuffer), 2048)
+    const name = file.name
 
-    wavetableStore.nameStore.set(file.name)
-
-    dispatch("input", decodedBuffer)
+    dispatch("input", { buffer, name })
   }
 </script>
 

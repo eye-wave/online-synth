@@ -1,6 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte"
-  import { fetchWavetableCollections, type WavetableCollection } from "./fetch-tables"
+  import { createEventDispatcher } from "svelte"
+  import { wavetableStore } from "./wavetable"
+  import Modal from "../common/Modal.svelte"
+
+  export let open = false
 
   type ModalEvents = {
     close: void
@@ -9,40 +12,35 @@
 
   const dispatch = createEventDispatcher<ModalEvents>()
 
-  let tables: WavetableCollection[] = []
-  let dialog: HTMLDialogElement
-
-  function close() {
-    dialog.close()
-    dispatch("close")
-  }
-
-  onMount(async () => {
-    dialog.showModal()
-    tables = await fetchWavetableCollections()
-  })
+  let tables = wavetableStore.tableMap
 </script>
 
-<dialog bind:this={dialog}>
-  <button on:click={close}>Close me please</button>
-
-  <ul>
-    {#each tables as collection}
-      <h2>{collection.name}</h2>
-      <ul>
-        {#each collection.tables as table}
-          <li>
-            <button on:click={() => dispatch("change", [collection.name, table])}>{table}</button>
-          </li>
-        {/each}
-      </ul>
-    {/each}
-  </ul>
-</dialog>
-
-<style>
-  dialog::backdrop {
-    background: #00000060;
-    backdrop-filter: blur(1rem);
-  }
-</style>
+<Modal on:close bind:open>
+  <table>
+    <thead>
+      <tr>
+        <th>Fav</th>
+        <th>Name</th>
+        <th>Pack</th>
+      </tr>
+      {#each tables as collection}
+        <details open>
+          <summary>
+            {collection.name}
+          </summary>
+          <table>
+            {#each collection.tables as table}
+              <tr>
+                <th>{"<3"}</th>
+                <th>
+                  <button on:click={() => dispatch("change", [collection.name, table])}>{table}</button>
+                </th>
+                <th>{collection.name}</th>
+              </tr>
+            {/each}
+          </table>
+        </details>
+      {/each}
+    </thead>
+  </table>
+</Modal>

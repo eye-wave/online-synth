@@ -1,12 +1,9 @@
 <script lang="ts">
-  import { fetchTable } from "./fetch-tables"
-  import { get } from "svelte/store"
-  import { globalStore } from "src/lib/global"
+  import { globalStore } from "src/lib/stores/global"
   import { onMount } from "svelte"
   import { wavetableStore } from "./wavetable"
   import DownloadBtn from "../common/DownloadBtn.svelte"
   import ImportBtn from "../common/ImportBtn.svelte"
-  import Modal from "./Modal.svelte"
   import type { ComponentType, SvelteComponent } from "svelte"
   import View2d from "./View2d.svelte"
 
@@ -19,9 +16,14 @@
   $: nameStore = wavetableStore.nameStore
 
   let frameCount = 1
-  let cachedFrameCount = frameCount
+  $: frameCount = Math.floor($bufferStore.length / globalStore.windowSize)
 
   let modalOpen = false
+  let Modal: ComponentType<SvelteComponent> | null = null
+  async function modalPromise() {
+    const { default: Component } = await import("./Modal.svelte")
+    Modal = Component
+  }
 
   type Comp = ComponentType<SvelteComponent>
   type Views = "2D" | "3D" | "SP"
@@ -42,24 +44,12 @@
     },
   }
 
-  updateWavetable()
-  function updateWavetable() {
-    cachedFrameCount = frameCount
-    frameCount = Math.floor(get(wavetableStore.bufferStore).length / $globalStore.windowSize)
-
-    wavetableStore.frameStore.update(frame => Math.floor(((frame - 1) * frameCount) / cachedFrameCount) + 1)
+  function onPickStockWavetable({ detail: [collectionName, tableName] }: CustomEvent<[string, string]>) {
+    wavetableStore.setStockTable(collectionName, tableName).catch(console.error)
   }
 
-  async function onPickStockWavetable({ detail: [collectionName, tableName] }: CustomEvent<[string, string]>) {
-    const buffer = await fetchTable(collectionName, tableName)
-
-    nameStore.set(tableName)
-    updateImportedWavetable(buffer)
-  }
-
-  function updateImportedWavetable(buffer: Float32Array) {
-    bufferStore.set(buffer)
-    updateWavetable()
+  function updateImportedWavetable({ name, buffer }: { name: string; buffer: Float32Array }) {
+    wavetableStore.setTable(name, buffer)
   }
 
   function nextView() {
@@ -96,13 +86,15 @@
     <ImportBtn on:input={e => updateImportedWavetable(e.detail)} />
 
     <div style:display="flex" style:flex="1">
-      <button>{"<"}</button>
+      <button on:click={() => wavetableStore.prev()}>{"<"}</button>
       <button on:click={() => (modalOpen = true)} style:flex="1" style:text-align="center">{$nameStore}</button>
-      <button>{">"}</button>
+      <button on:click={() => wavetableStore.next()}>{">"}</button>
     </div>
 
     {#if modalOpen}
-      <Modal on:change={onPickStockWavetable} on:close={() => (modalOpen = false)} />
+      {#await modalPromise() then _}
+        <svelte:component this={Modal} on:change={onPickStockWavetable} bind:open={modalOpen} />
+      {/await}
     {/if}
   </section>
 

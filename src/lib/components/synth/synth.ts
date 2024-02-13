@@ -1,6 +1,7 @@
 import { clamp } from "src/lib/utils/math"
 import { get } from "svelte/store"
-import { globalStore } from "src/lib/global"
+import { globalStore } from "src/lib/stores/global"
+import { tuningStore } from "src/lib/stores/tuning"
 
 const noteKeybinds = "awsedftgyhujkolp;']"
 export function getNoteFromKey(key: string, addOctave = false, octave = 0) {
@@ -20,10 +21,10 @@ export function createSampler(
   frame: number,
   note: number
 ) {
-  const { TUNING_TABLE, BASE_FREQUENCY, analyzerNode } = get(globalStore)
+  const { analyzerNode, baseFrequency } = globalStore
 
   const sampler = ctx.createBufferSource()
-  const playbackRate = TUNING_TABLE[note] / BASE_FREQUENCY
+  const playbackRate = get(tuningStore).tuningTable[note] / baseFrequency
 
   sampler.loop = true
   sampler.buffer = wavetable
@@ -31,8 +32,8 @@ export function createSampler(
 
   const frameFixed = clamp(frame, 1, 256)
 
-  sampler.loopStart = (frameFixed - 1) / BASE_FREQUENCY
-  sampler.loopEnd = frameFixed / BASE_FREQUENCY
+  sampler.loopStart = (frameFixed - 1) / baseFrequency
+  sampler.loopEnd = frameFixed / baseFrequency
 
   const gainNode = ctx.createGain()
   gainNode.gain.setValueAtTime(0.4, ctx.currentTime)

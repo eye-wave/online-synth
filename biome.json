@@ -23,7 +23,10 @@
       },
       "style": { "noParameterAssign": "off" },
       "performance": { "all": true },
-      "correctness": { "all": true }
+      "correctness": {
+        "all": true,
+        "noUndeclaredVariables": "off"
+      }
     }
   },
   "javascript": {

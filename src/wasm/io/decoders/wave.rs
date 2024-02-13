@@ -10,8 +10,6 @@ impl IO {
     pub fn decode_wav(data: &[u8], window_size: u16) -> Vec<f32> {
         let cursor = Cursor::new(data);
 
-        web_log!("{:?}", data);
-
         let reader = match WavReader::new(cursor) {
             Ok(reader) => reader,
             Err(error) => {

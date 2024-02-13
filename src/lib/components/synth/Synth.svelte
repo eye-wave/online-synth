@@ -2,10 +2,10 @@
   import { clamp } from "../../utils/math"
   import { createEventDispatcher } from "svelte"
   import { createSampler, getNoteFromKey } from "./synth"
-  import { globalStore } from "src/lib/global"
   import { wavetableStore } from "../wavetable/wavetable"
+  import { globalStore } from "src/lib/stores/global"
 
-  $: ctx = $globalStore.audioContext
+  const ctx = globalStore.audioContext
 
   export let VOICE_COUNT = 8
   export let wavetable: AudioBuffer | null = null
@@ -61,15 +61,10 @@
     if (activeElement === "INPUT") return
     if (activeElement === "TEXTAREA") return
 
-    // biome-ignore format: stop messing with my switch
+    // prettier-ignore
     switch (e.key) {
-      case "z":
-        return (keyboardCurrentOctave -= 1)
-      case "x":
-        return (keyboardCurrentOctave += 1)
-
-      default:
-        break
+      case "z": keyboardCurrentOctave -= 1; break
+      case "x": keyboardCurrentOctave += 1; break
     }
 
     keyboardCurrentOctave = clamp(keyboardCurrentOctave, 1, 10)

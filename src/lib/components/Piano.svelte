@@ -17,6 +17,7 @@
 
   const onResize = () => {
     let value = Math.floor((window.innerWidth * 12) / 175) - 10
+    if (numberOfAllKeys <= value) return numberOfAllKeys
     if (isKeyBlack(value + offset + 6)) return value - 1
     return value
   }
@@ -48,6 +49,11 @@
 <div id="piano">
   {#each Array(numberOfKeysToDisplay) as _, i}
     {@const key = i + firstKey}
+    <!-- BUG: playing notes out of range
+      when the number of keys is close to maximum,]
+      high notes are out of range because of offseting
+      the whole keyboard by the "offset" variable
+    -->
 
     <div
       aria-hidden="true"
@@ -82,10 +88,6 @@
     margin-left: 2px;
     user-select: none;
     position: relative;
-
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
   }
 
   .piano-key:after {

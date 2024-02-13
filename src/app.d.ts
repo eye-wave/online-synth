@@ -2,8 +2,12 @@ declare module "*.svg?component" {
   import type { ComponentType, SvelteComponentTyped } from "svelte"
   import type { SVGAttributes } from "svelte/elements"
 
-  // biome-ignore lint/correctness/noUndeclaredVariables: d.ts
-  const content = ComponentType<SvelteComponentTyped<SVGAttributes<SVGSVGElement>>>
-  // biome-ignore lint/correctness/noUndeclaredVariables: d.ts
+  const content: ComponentType<SvelteComponentTyped<SVGAttributes<SVGSVGElement>>>
+  export default content
+}
+
+declare module "*.yaml" {
+  // biome-ignore lint/suspicious/noExplicitAny:
+  const content: any
   export default content
 }

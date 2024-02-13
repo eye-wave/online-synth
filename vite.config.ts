@@ -5,6 +5,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte"
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
 import { VitePWA } from "vite-plugin-pwa"
 import * as fs from "node:fs"
+import content from "@originjs/vite-plugin-content"
 import deadFile from "vite-plugin-deadfile"
 import injectHTML from "vite-plugin-html-inject"
 import svg from "@poppanator/sveltekit-svg"
@@ -71,6 +72,11 @@ export default defineConfig({
     },
   },
   plugins: [
+    content({
+      yaml: {
+        enabled: true,
+      },
+    }),
     wasm(),
     topLevelAwait(),
     svg(),
