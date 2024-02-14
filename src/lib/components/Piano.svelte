@@ -17,8 +17,9 @@
 
   const onResize = () => {
     let value = Math.floor((window.innerWidth * 12) / 175) - 10
+    if (isKeyBlack(value + offset + 6)) value--
+    if (value < 0) return 0
     if (numberOfAllKeys <= value) return numberOfAllKeys
-    if (isKeyBlack(value + offset + 6)) return value - 1
     return value
   }
 

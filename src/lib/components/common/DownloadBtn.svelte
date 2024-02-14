@@ -24,13 +24,6 @@
   })
 </script>
 
-<a download="{$nameStore}.wav" {href}>
+<a class="btn" download="{$nameStore}.wav" {href}>
   <DownloadIcon height="24" />
 </a>
-
-<style>
-  a {
-    display: inline-block;
-    color: currentColor;
-  }
-</style>

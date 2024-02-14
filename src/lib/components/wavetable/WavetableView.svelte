@@ -6,6 +6,7 @@
   import ImportBtn from "../common/ImportBtn.svelte"
   import type { ComponentType, SvelteComponent } from "svelte"
   import View2d from "./View2d.svelte"
+  import ArrowIcon from "ico/arrow.svg?component"
 
   export let width = 380
   export let height = 250
@@ -21,7 +22,7 @@
   let modalOpen = false
   let Modal: ComponentType<SvelteComponent> | null = null
   async function modalPromise() {
-    const { default: Component } = await import("./Modal.svelte")
+    const { default: Component } = await import("./modal/Modal.svelte")
     Modal = Component
   }
 
@@ -91,9 +92,13 @@
     <ImportBtn on:input={e => updateImportedWavetable(e.detail)} />
 
     <div style:display="flex" style:flex="1">
-      <button on:click={() => wavetableStore.prev()}>{"<"}</button>
-      <button on:click={() => (modalOpen = true)} class="modal-btn">{$nameStore}</button>
-      <button on:click={() => wavetableStore.next()}>{">"}</button>
+      <button class="btn" on:click={() => wavetableStore.prev()}>
+        <ArrowIcon style="transform:rotate(180deg)" />
+      </button>
+      <button class="btn" style:flex="1" on:click={() => (modalOpen = true)}>{$nameStore}</button>
+      <button class="btn" on:click={() => wavetableStore.next()}>
+        <ArrowIcon />
+      </button>
     </div>
 
     {#if modalOpen}
@@ -123,11 +128,6 @@
 </div>
 
 <style>
-  .modal-btn {
-    flex: 1;
-    text-align: center;
-  }
-
   .topbar {
     display: flex;
   }

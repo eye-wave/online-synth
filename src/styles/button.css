@@ -1,0 +1,15 @@
+.btn {
+  color: currentColor;
+  margin: 1px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #eee;
+  color: #000;
+  display: grid;
+  place-items: center;
+}
+
+.btn:hover {
+  background: #ddd;
+}

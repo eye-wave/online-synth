@@ -11,7 +11,7 @@
   let open = false
 </script>
 
-<button on:click={() => (open = true)}>
+<button class="btn" on:click={() => (open = true)}>
   <CogIcon />
 </button>
 
@@ -26,5 +26,6 @@
     position: absolute;
     top: 15px;
     right: 15px;
+    padding: 4px;
   }
 </style>

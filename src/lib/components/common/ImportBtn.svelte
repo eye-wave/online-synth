@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte"
   import { globalConsts } from "src/lib/stores/constants"
   import ImportIcon from "ico/import.svg?component"
+  import { decodeBuffer } from "src/lib/utils/buffer"
 
   const accept = ".aac,.flac,.mp3,.ogg,.opus,.wav,.webm"
 
@@ -22,21 +23,30 @@
 
     const { audioContext } = globalConsts
     const arrayBuffer = await file.arrayBuffer()
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-    const buffer = audioBuffer.getChannelData(0)
+    const buffer = await decodeBuffer(audioContext, arrayBuffer)
     const name = file.name
 
     dispatch("input", { buffer, name })
   }
+
+  function onKeydown(e: KeyboardEvent) {
+    if (e.key === " " || e.key === "Enter") {
+      const target = e.target as HTMLInputElement
+      target?.click()
+    }
+  }
 </script>
 
-<label for="fileInput">
-  <ImportIcon height="24" />
-  <input bind:files type="file" id="fileInput" {accept} on:change={handleFileChange} />
-</label>
-
-<style>
-  input {
-    display: none;
-  }
-</style>
+<div role="button" tabindex="0" class="btn" on:keydown={onKeydown}>
+  <label for="fileInput">
+    <ImportIcon height="24" />
+    <input
+      bind:files
+      id="fileInput"
+      style:display="none"
+      type="file"
+      {accept}
+      on:change={handleFileChange}
+    />
+  </label>
+</div>

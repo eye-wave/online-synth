@@ -38,7 +38,7 @@
 <dialog bind:this={dialog} style={$$props.style} class={$$props.class}>
   <main>
     <slot name="btn">
-      <button on:click={close}>X</button>
+      <button class="btn" style:padding="4px 8px" on:click={close}>X</button>
     </slot>
     <slot />
   </main>
@@ -51,6 +51,11 @@
 
   main {
     padding: 1rem;
+  }
+
+  dialog {
+    color: #fff;
+    border: 0;
   }
 
   dialog::backdrop {

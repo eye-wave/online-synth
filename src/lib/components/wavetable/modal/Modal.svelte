@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte"
-  import { wavetableStore } from "./wavetable"
-  import Modal from "../common/Modal.svelte"
+  import { wavetableStore } from "../wavetable"
+  import Modal from "../../common/Modal.svelte"
+  import HeartBtn from "./HeartBtn.svelte"
 
   export let open = false
 
@@ -31,7 +32,9 @@
           <table>
             {#each collection.tables as table}
               <tr>
-                <th>{"<3"}</th>
+                <th>
+                  <HeartBtn />
+                </th>
                 <th>
                   <button on:click={() => dispatch("change", [collection.name, table])}
                     >{table}</button

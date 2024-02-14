@@ -1,6 +1,14 @@
+import { globalConsts } from "../stores/constants"
+
 export async function decodeBuffer(ctx: AudioContext, data: ArrayBuffer) {
+  const maxLength = globalConsts.windowSize * 256
   const audioBuffer = await ctx.decodeAudioData(data)
-  return audioBuffer.getChannelData(0)
+  const buffer = audioBuffer.getChannelData(0)
+
+  buffer.length > maxLength &&
+    console.warn(`Maximumg length exceeded, ${buffer.length / ctx.sampleRate}s of audio wasted`)
+
+  return buffer.slice(0, maxLength)
 }
 
 export function float32ToAudioBuffer(input: Float32Array, context: AudioContext) {

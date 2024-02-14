@@ -44,6 +44,11 @@ impl Chart3dOptions {
 
 #[wasm_bindgen]
 impl Chart3d {
+    #[inline]
+    fn get_frame_count<T>(data: &[T], frame_size: &usize) -> usize {
+        (data.len() / *frame_size).clamp(1, 256)
+    }
+
     fn modify_projection(
         chart: &mut ChartContext<
             CanvasBackend,
@@ -92,7 +97,7 @@ impl Chart3d {
             return;
         }
 
-        let number_of_frames = data.len() / framesize;
+        let number_of_frames = Self::get_frame_count(data, &framesize);
         let single_frame = number_of_frames < 2;
 
         let step = 8;
@@ -159,7 +164,7 @@ impl Chart3d {
             return;
         }
 
-        let number_of_frames = data.len() / framesize;
+        let number_of_frames = Self::get_frame_count(data, &framesize);
         let data_range_x = 0.0..framesize as f64;
         let data_range_y = -1.0..1.0;
         let data_range_z = number_of_frames as f64..0.0;

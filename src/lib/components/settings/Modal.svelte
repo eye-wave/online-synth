@@ -34,3 +34,9 @@
     />
   </label>
 </Modal>
+
+<style>
+  label {
+    display: block;
+  }
+</style>
