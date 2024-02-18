@@ -14,9 +14,15 @@ mod tests {
 
     #[test]
     fn test_hex_to_rgb() {
-        assert_eq!(hex_to_rgb(&0x000000), RGBColor(0, 0, 0));
-        assert_eq!(hex_to_rgb(&0xFF0000), RGBColor(255, 0, 0));
-        assert_eq!(hex_to_rgb(&0x00FF00), RGBColor(0, 255, 0));
-        assert_eq!(hex_to_rgb(&0x0000FF), RGBColor(0, 0, 255));
+        let tests = [
+            (&0x000000, RGBColor(0, 0, 0)),
+            (&0xFF0000, RGBColor(255, 0, 0)),
+            (&0x00FF00, RGBColor(0, 255, 0)),
+            (&0x0000FF, RGBColor(0, 0, 255)),
+        ];
+
+        for (input, expected) in tests.iter() {
+            assert_eq!(hex_to_rgb(input), *expected);
+        }
     }
 }
