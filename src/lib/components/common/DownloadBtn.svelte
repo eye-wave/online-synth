@@ -12,10 +12,13 @@
   const unsubscribe = wavetableStore.bufferStore.subscribe(buffer => updateBlobUrl(buffer))
 
   function updateBlobUrl(input: Float32Array) {
-    const buffer = IO.encode_wav(input, globalConsts.audioContext.sampleRate)
-    const blob = new Blob([buffer], { type: "audio/wav" })
-
-    href = URL.createObjectURL(blob)
+    try {
+      const buffer = IO.encode_wav(input, globalConsts.audioContext.sampleRate)
+      const blob = new Blob([buffer], { type: "audio/wav" })
+      href = URL.createObjectURL(blob)
+    } catch (error) {
+      URL.revokeObjectURL(href)
+    }
   }
 
   onDestroy(() => {
@@ -24,6 +27,6 @@
   })
 </script>
 
-<a class="btn" download="{$nameStore}.wav" {href}>
+<a aria-label="download wavetable" class="btn" download="{$nameStore}.wav" {href}>
   <DownloadIcon height="24" />
 </a>

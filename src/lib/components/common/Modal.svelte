@@ -37,9 +37,7 @@
 
 <dialog bind:this={dialog} style={$$props.style} class={$$props.class}>
   <main>
-    <slot name="btn">
-      <button class="btn" style:padding="4px 8px" on:click={close}>X</button>
-    </slot>
+    <button class="btn" style:padding="4px 8px" on:click={close}>X</button>
     <slot />
   </main>
 </dialog>

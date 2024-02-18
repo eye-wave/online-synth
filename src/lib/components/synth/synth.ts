@@ -5,15 +5,14 @@ import { globalConsts } from "src/lib/stores/constants"
 import { tuningStore } from "src/lib/stores/tuning"
 
 const noteKeybinds = "awsedftgyhujkolp;']"
+
 export function getNoteFromKey(key: string, addOctave = false, octave = 0) {
-  if (key.length > 1) return null
+  if (key.length !== 1) return null
 
-  let note = noteKeybinds.indexOf(key.toLowerCase())
+  const keyIndex = noteKeybinds.indexOf(key.toLowerCase())
+  if (keyIndex === -1) return null
 
-  if (note === -1) return null
-  if (addOctave) note += octave * 12
-
-  return note
+  return addOctave ? keyIndex + octave * 12 : keyIndex
 }
 
 export function createSampler(
@@ -24,21 +23,24 @@ export function createSampler(
 ) {
   const { baseFrequency } = globalConsts
   const { masterGain } = audioInterfaceStore
+  const { tuningTable } = get(tuningStore)
 
   const sampler = ctx.createBufferSource()
-  const playbackRate = get(tuningStore).tuningTable[note] / baseFrequency
+  const playbackRate = tuningTable[note] / baseFrequency
 
   sampler.loop = true
   sampler.buffer = wavetable
-  sampler.playbackRate.setValueAtTime(playbackRate, ctx.currentTime)
+  sampler.playbackRate.setValueAtTime(playbackRate, ctx.currentTime + 0.01)
 
   const frameFixed = clamp(frame, 1, 256)
+  const loopStartTime = (frameFixed - 1) / baseFrequency
+  const loopEndTime = frameFixed / baseFrequency
 
-  sampler.loopStart = (frameFixed - 1) / baseFrequency
-  sampler.loopEnd = frameFixed / baseFrequency
+  sampler.loopStart = loopStartTime
+  sampler.loopEnd = loopEndTime
 
   const gainNode = ctx.createGain()
-  gainNode.gain.setValueAtTime(0.6, ctx.currentTime)
+  gainNode.gain.setValueAtTime(0.6, ctx.currentTime + 0.01)
 
   sampler.connect(gainNode)
   masterGain.connectTo(gainNode)

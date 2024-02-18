@@ -11,6 +11,7 @@ import injectHTML from "vite-plugin-html-inject"
 import svg from "@poppanator/sveltekit-svg"
 import topLevelAwait from "vite-plugin-top-level-await"
 import TurboConsole from "unplugin-turbo-console/vite"
+import requireTransform from "vite-plugin-require-transform"
 import wasm from "vite-plugin-wasm"
 
 const prod = process.env.NODE_ENV === "production"
@@ -66,9 +67,7 @@ export default defineConfig({
   },
   build: {
     modulePreload: {
-      resolveDependencies() {
-        return []
-      },
+      polyfill: false,
     },
   },
   plugins: [
@@ -80,6 +79,7 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     svg(),
+    requireTransform(),
     svelte({
       preprocess: vitePreprocess(),
       compilerOptions: {
@@ -122,6 +122,9 @@ export default defineConfig({
       },
     }),
   ],
+  preview: {
+    port: 3000,
+  },
   server: {
     port: 3000,
   },

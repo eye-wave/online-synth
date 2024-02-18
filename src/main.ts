@@ -24,6 +24,7 @@ window.addEventListener(
       try {
         const { globalConsts } = await import("./lib/stores/constants")
         const { audioInterfaceStore } = await import("./lib/stores/audio")
+        await import("pkg/wavetable_synth")
 
         globalConsts.init(audioContext)
         audioInterfaceStore.init(audioContext)

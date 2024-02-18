@@ -86,3 +86,31 @@ impl IO {
         buffer
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::wasm::synth::generators::generate_saw_tooth;
+    use std::process::Command;
+
+    #[test]
+    fn test_encoder() {
+        let samplerate = 44100;
+        let filepath = "/tmp/wavetable.wav";
+
+        let table = generate_saw_tooth(samplerate);
+        let buffer = IO::encode_wav(&table, samplerate as u32);
+
+        std::fs::write(filepath, buffer).unwrap();
+
+        // TODO: use a library for this test, instead of SOX
+        let output = Command::new("sox")
+            .arg("--info")
+            .arg(filepath)
+            .output()
+            .expect("Failed to execute sox");
+
+        assert!(output.status.success(), "Sox failed to analyze the file");
+        std::fs::remove_file(filepath).expect(&format!("Failed to remove {}", filepath))
+    }
+}

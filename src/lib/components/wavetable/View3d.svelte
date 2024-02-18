@@ -14,7 +14,6 @@
   export let zoom = 1.2
 
   const chartOptions = new Chart3dOptions(color, pitch, yaw, zoom, scaleY)
-  onDestroy(() => chartOptions.free())
 
   $: bufferStore = wavetableStore.bufferStore
   $: frameStore = wavetableStore.frameStore

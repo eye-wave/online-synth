@@ -13,15 +13,13 @@ export function generateTuningTable(referenceFrequency = 440) {
 export function isKeyBlack(key: number) {
   const truncToOctave = key % 12
   switch (truncToOctave) {
-    case 0:
-    case 2:
-    case 4:
-    case 5:
-    case 7:
-    case 9:
-    case 11:
-      return false
-    default:
+    case 1:
+    case 3:
+    case 6:
+    case 8:
+    case 10:
       return true
+    default:
+      return false
   }
 }

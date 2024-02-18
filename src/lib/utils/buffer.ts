@@ -1,6 +1,8 @@
 import { globalConsts } from "../stores/constants"
 
 export async function decodeBuffer(ctx: AudioContext, data: ArrayBuffer) {
+  // TODO: use custom decoders for files, web browsers can't handle
+
   const maxLength = globalConsts.windowSize * 256
   const audioBuffer = await ctx.decodeAudioData(data)
   const buffer = audioBuffer.getChannelData(0)

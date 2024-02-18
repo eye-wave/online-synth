@@ -59,8 +59,7 @@
 
     const activeElement = document.activeElement?.tagName
 
-    if (activeElement === "INPUT") return
-    if (activeElement === "TEXTAREA") return
+    if (activeElement === "INPUT" || activeElement === "TEXTAREA") return
 
     // prettier-ignore
     switch (e.key) {

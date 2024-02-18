@@ -3,22 +3,25 @@
   import type { ComponentType, SvelteComponent } from "svelte"
 
   let Modal: ComponentType<SvelteComponent> | null = null
-  async function modalPromise() {
-    const { default: Component } = await import("./Modal.svelte")
-    Modal = Component
+
+  async function onClick() {
+    if (!Modal) {
+      const { default: Component } = await import("./Modal.svelte")
+      Modal = Component
+    }
+
+    open = true
   }
 
   let open = false
 </script>
 
-<button class="btn" on:click={() => (open = true)}>
+<button class="btn" on:click={onClick} aria-label="settings">
   <CogIcon />
 </button>
 
 {#if open}
-  {#await modalPromise() then _}
-    <svelte:component this={Modal} bind:open />
-  {/await}
+  <svelte:component this={Modal} bind:open />
 {/if}
 
 <style>

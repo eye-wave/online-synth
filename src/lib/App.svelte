@@ -39,7 +39,7 @@
   <h3>Todo</h3>
 
   <ul>
-    <i>Import export</i>
+    <li><i>Import export</i></li>
     <li>Exported wavetable work flawlessly in vital, but are a bit broken in Serum</li>
     <li>Importing wavetables from serum works perfectly</li>
   </ul>

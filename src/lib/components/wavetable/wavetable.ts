@@ -1,8 +1,9 @@
-import { generate_saw_tooth } from "pkg/wavetable_synth"
-import { writable } from "svelte/store"
-import tableMap from "src/assets/wavetables/tablemap.yaml"
-import { globalConsts } from "src/lib/stores/constants"
 import { decodeBuffer } from "src/lib/utils/buffer"
+import { generate_saw_tooth } from "pkg/wavetable_synth"
+import { globalConsts } from "src/lib/stores/constants"
+import { writable } from "svelte/store"
+
+const wavetableCollections = require("src/assets/wavetables/tablemap.yaml") as WavetableCollection[]
 
 export type WavetableStore = {
   buffer: Float32Array
@@ -21,18 +22,20 @@ function createWavetableStore() {
   const frameStore = writable<number>(1)
 
   const tableCache = new Map<string, Float32Array>()
-  let cachedFrameCount = 1
 
-  const tableCount = (tableMap as WavetableCollection[]).reduce(
+  let cachedFrameCount = 1
+  let stockTableIndex = -1
+
+  const tableCount = wavetableCollections.reduce(
     (sum, collection) => sum + collection.tables.length,
     0
   )
 
-  function getTable(input: number): [string | undefined, string | undefined] {
+  const getTableFromIndex = (input: number): [string | undefined, string | undefined] => {
     let i = input
+    const collectionMap = wavetableCollections
 
-    const colmap = tableMap as WavetableCollection[]
-    for (const collection of colmap) {
+    for (const collection of collectionMap) {
       i -= collection.tables.length
 
       if (i < 0) {
@@ -44,61 +47,62 @@ function createWavetableStore() {
     return [undefined, undefined]
   }
 
-  let stockTableIndex = -1
+  const getIndexFromTable = (collectionName: string, tableName: string) => {
+    let i = 0
+    for (const collection of wavetableCollections) {
+      if (collection.name !== collectionName) {
+        i += collection.tables.length
+        continue
+      }
 
-  function next() {
-    if (++stockTableIndex > tableCount) stockTableIndex = 0
+      return i + collection.tables.indexOf(tableName)
+    }
 
-    try {
-      const [collectionName, tableName] = getNamesFromIndex(stockTableIndex)
-      setStockTable(collectionName, tableName).catch(console.error)
-    } catch (e) {
-      console.error(e)
+    return -1
+  }
+
+  const getNamesFromIndex = (index: number): [string, string] => {
+    const [collectionName, tableName] = getTableFromIndex(index)
+    if (!tableName || !collectionName)
+      throw Error(`No table, nor collection found for index: ${index}`)
+    return [collectionName, tableName] as [string, string]
+  }
+
+  const changeStockTableIndex = (delta: number) => {
+    stockTableIndex += delta
+    if (stockTableIndex >= tableCount) {
+      stockTableIndex = 0
+    } else if (stockTableIndex < 0) {
+      stockTableIndex = tableCount - 1
     }
   }
 
-  function prev() {
-    if (--stockTableIndex < 0) stockTableIndex = tableCount - 1
-
-    try {
-      const [collectionName, tableName] = getNamesFromIndex(stockTableIndex)
-      setStockTable(collectionName, tableName).catch(console.error)
-    } catch (e) {
-      console.error(e)
-    }
+  const updateTableAndFrame = () => {
+    const [collectionName, tableName] = getNamesFromIndex(stockTableIndex)
+    setStockTable(collectionName, tableName).catch(console.error)
   }
 
-  async function setStockTable(collectionName: string, tableName: string) {
-    const buffer = await fetchTable(collectionName, tableName)
+  const setStockTable = async (collectionName: string, tableName: string) => {
+    const buffer = await fetchStockTable(collectionName, tableName)
+    const newIndex = getIndexFromTable(collectionName, tableName)
+    if (newIndex >= 0) stockTableIndex = newIndex
 
     bufferStore.set(buffer)
     nameStore.set(tableName)
-
     recalculateFrame(buffer)
   }
 
-  function setTable(name: string, buffer: Float32Array) {
-    bufferStore.set(buffer)
-    nameStore.set(name)
-
-    recalculateFrame(buffer)
-  }
-
-  function recalculateFrame(buffer: Float32Array) {
+  const recalculateFrame = (buffer: Float32Array) => {
     const frameCount = Math.floor(buffer.length / globalConsts.windowSize)
+    if (frameCount === cachedFrameCount) return
     frameStore.update(frame => Math.floor(((frame - 1) * frameCount) / cachedFrameCount) + 1)
-
     cachedFrameCount = frameCount
   }
 
-  function getNamesFromIndex(index: number) {
-    const [collectionName, tableName] = getTable(index)
-    if (!tableName || !collectionName)
-      throw Error(`No table, nor collection found for index: ${index}`)
-
-    return [collectionName, tableName] as [string, string]
-  }
-  async function fetchTable(collectionName: string, tableName: string): Promise<Float32Array> {
+  const fetchStockTable = async (
+    collectionName: string,
+    tableName: string
+  ): Promise<Float32Array> => {
     const hash = `${collectionName}:${tableName}`
 
     if (tableCache.has(hash)) {
@@ -118,12 +122,22 @@ function createWavetableStore() {
     bufferStore,
     nameStore,
     frameStore,
-    next,
-    prev,
+    next() {
+      changeStockTableIndex(1)
+      updateTableAndFrame()
+    },
+    prev() {
+      changeStockTableIndex(-1)
+      updateTableAndFrame()
+    },
     setStockTable,
-    setTable,
+    setTable(name: string, buffer: Float32Array) {
+      bufferStore.set(buffer)
+      nameStore.set(name)
+      recalculateFrame(buffer)
+    },
     get tableMap() {
-      return tableMap as WavetableCollection[]
+      return wavetableCollections
     },
   }
 }

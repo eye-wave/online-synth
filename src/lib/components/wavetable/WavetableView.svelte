@@ -21,10 +21,6 @@
 
   let modalOpen = false
   let Modal: ComponentType<SvelteComponent> | null = null
-  async function modalPromise() {
-    const { default: Component } = await import("./modal/Modal.svelte")
-    Modal = Component
-  }
 
   type Comp = ComponentType<SvelteComponent>
   type Views = "2D" | "3D" | "SP"
@@ -34,18 +30,9 @@
     Views,
     { promise: () => Promise<{ default: Comp }>; component: Comp | null }
   > = {
-    "2D": {
-      promise: () => new Promise(r => r),
-      component: View2d,
-    },
-    "3D": {
-      promise: () => import("./View3d.svelte"),
-      component: null,
-    },
-    SP: {
-      promise: () => import("./ViewSpectral.svelte"),
-      component: null,
-    },
+    "2D": { promise: () => new Promise(r => r), component: View2d },
+    "3D": { promise: () => import("./View3d.svelte"), component: null },
+    SP: { promise: () => import("./ViewSpectral.svelte"), component: null },
   }
 
   function onPickStockWavetable({
@@ -63,9 +50,8 @@
     switch (view) {
       case "2D": view = "3D"; break
       case "3D": view = "SP"; break
-      case "SP": view = "2D" ;break
+      case "SP": view = "2D"; break
     }
-
     loadComponent()
   }
 
@@ -81,8 +67,15 @@
       views[view].component = component.default
       isLoaded = true
     }
-
     currentView = views[view].component
+  }
+
+  async function openModal() {
+    if (!Modal) {
+      const { default: Component } = await import("./modal/Modal.svelte")
+      Modal = Component
+    }
+    modalOpen = true
   }
 </script>
 
@@ -92,19 +85,19 @@
     <ImportBtn on:input={e => updateImportedWavetable(e.detail)} />
 
     <div style:display="flex" style:flex="1">
-      <button class="btn" on:click={() => wavetableStore.prev()}>
+      <button aria-label="previous wavetable" class="btn" on:click={() => wavetableStore.prev()}>
         <ArrowIcon style="transform:rotate(180deg)" />
       </button>
-      <button class="btn" style:flex="1" on:click={() => (modalOpen = true)}>{$nameStore}</button>
-      <button class="btn" on:click={() => wavetableStore.next()}>
+      <button aria-label="wavetable browser" class="btn" style:flex="1" on:click={openModal}
+        >{$nameStore}</button
+      >
+      <button aria-label="next wavetable" class="btn" on:click={() => wavetableStore.next()}>
         <ArrowIcon />
       </button>
     </div>
 
     {#if modalOpen}
-      {#await modalPromise() then _}
-        <svelte:component this={Modal} on:change={onPickStockWavetable} bind:open={modalOpen} />
-      {/await}
+      <svelte:component this={Modal} on:change={onPickStockWavetable} bind:open={modalOpen} />
     {/if}
   </section>
 

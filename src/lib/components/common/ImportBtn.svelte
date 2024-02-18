@@ -23,9 +23,10 @@
 
     const { audioContext } = globalConsts
     const arrayBuffer = await file.arrayBuffer()
-    const buffer = await decodeBuffer(audioContext, arrayBuffer)
-    const name = file.name
+    const buffer = await decodeBuffer(audioContext, arrayBuffer).catch(console.error)
+    if (!buffer) return
 
+    const name = file.name
     dispatch("input", { buffer, name })
   }
 
@@ -37,7 +38,7 @@
   }
 </script>
 
-<div role="button" tabindex="0" class="btn" on:keydown={onKeydown}>
+<div aria-label="import audio" role="button" tabindex="0" class="btn" on:keydown={onKeydown}>
   <label for="fileInput">
     <ImportIcon height="24" />
     <input
